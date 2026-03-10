@@ -62,10 +62,10 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
   };
 
   return (
-    <div className="rounded-xl bg-white p-5 shadow-sm">
+    <div className="rounded-xl bg-white p-5 shadow-sm dark:bg-gray-800">
       <form onSubmit={handleSave} className="space-y-4">
         <div>
-          <label htmlFor="goal-input" className="mb-1.5 block text-sm font-medium text-gray-700">
+          <label htmlFor="goal-input" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
             Daily Goal (ml)
           </label>
           <input
@@ -76,12 +76,12 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
             step={50}
             value={goalValue}
             onChange={(e) => { setGoalValue(e.target.value); setError(''); }}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm transition-colors focus:border-blue-400 focus:outline-none"
+            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm transition-colors focus:border-blue-400 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500"
           />
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
+          <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
             Quick Add Presets (ml)
           </label>
           <div className="space-y-2">
@@ -93,13 +93,13 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
                   max={MAX_SINGLE_ENTRY_ML}
                   value={val}
                   onChange={(e) => updatePreset(i, e.target.value)}
-                  className="flex-1 rounded-lg border border-gray-200 px-3 py-1.5 text-sm transition-colors focus:border-blue-400 focus:outline-none"
+                  className="flex-1 rounded-lg border border-gray-200 px-3 py-1.5 text-sm transition-colors focus:border-blue-400 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500"
                 />
                 {presetValues.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removePreset(i)}
-                    className="rounded p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                    className="rounded p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 dark:hover:text-red-400"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -134,7 +134,7 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 rounded-lg border border-gray-200 py-2 text-sm font-medium text-gray-600 transition-all hover:bg-gray-50 active:scale-[0.98]"
+            className="flex-1 rounded-lg border border-gray-200 py-2 text-sm font-medium text-gray-600 transition-all hover:bg-gray-50 active:scale-[0.98] dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
           >
             Cancel
           </button>

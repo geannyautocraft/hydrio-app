@@ -73,7 +73,7 @@ export function HydrationProgress() {
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-3xl font-bold tracking-tight text-gray-800">
+          <span className="text-3xl font-bold tracking-tight text-gray-800 dark:text-white">
             {currentMl.toLocaleString()}
           </span>
           <span className="text-xs text-gray-400">of {goalMl.toLocaleString()} ml</span>
