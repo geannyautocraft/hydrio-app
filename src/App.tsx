@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Header } from './components/Header';
-import { GoalEditor } from './components/GoalEditor';
+import { SettingsScreen } from './components/SettingsScreen';
 import { HydrationProgress } from './components/HydrationProgress';
 import { HydrationInsights } from './components/HydrationInsights';
 import { HydrationStatusCard } from './components/HydrationStatusCard';
@@ -11,6 +11,8 @@ import { DailyLogList } from './components/DailyLogList';
 import { HydrationHistory } from './components/HydrationHistory';
 import { HydrationStats } from './components/HydrationStats';
 import { WeeklyChart } from './components/WeeklyChart';
+import { HydrationHeatmap } from './components/HydrationHeatmap';
+import { AchievementsSection } from './components/AchievementsSection';
 import { Onboarding } from './components/Onboarding';
 import { useMidnightReset } from './hooks/useMidnightReset';
 import { useNotifications } from './hooks/useNotifications';
@@ -51,7 +53,7 @@ export default function App() {
 
       {showSettings && (
         <div className="mb-4">
-          <GoalEditor isOpen={showSettings} onClose={() => setShowSettings(false)} />
+          <SettingsScreen onClose={() => setShowSettings(false)} />
         </div>
       )}
 
@@ -67,6 +69,8 @@ export default function App() {
       <div className="mt-6 space-y-4">
         <DailyLogList />
         <WeeklyChart />
+        <HydrationHeatmap />
+        <AchievementsSection />
         <HydrationHistory />
         <InsightsPanel />
         <HydrationStats />

@@ -1,12 +1,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { DayRecord, WaterEntry, UserProfile, NotificationSettings } from '../types';
+import type { DayRecord, WaterEntry, UserProfile, NotificationSettings, ActivityLevel } from '../types';
 import {
   MAX_SINGLE_ENTRY_ML,
   DEFAULT_GOAL_ML,
   DEFAULT_PRESETS,
   WEIGHT_TO_ML_FACTOR,
   DEFAULT_REMINDER_INTERVAL,
+  ACTIVITY_MULTIPLIERS,
+  WEATHER_MULTIPLIER,
 } from '../types';
 import { getTodayKey } from '../utils/date';
 
@@ -34,7 +36,17 @@ interface HydrationActions {
   setQuickPresets: (presets: number[]) => void;
   setWeight: (weightKg: number | null) => void;
   setCustomGoal: (goalMl: number | null) => void;
+  setActivityLevel: (level: ActivityLevel) => void;
+  setWeatherAdjust: (enabled: boolean) => void;
   setNotifications: (settings: Partial<NotificationSettings>) => void;
+}
+
+function calcRecommendedGoal(weightKg: number | null, activityLevel: ActivityLevel, weatherAdjust: boolean): number {
+  if (!weightKg) return DEFAULT_GOAL_ML;
+  let goal = weightKg * WEIGHT_TO_ML_FACTOR;
+  goal *= ACTIVITY_MULTIPLIERS[activityLevel];
+  if (weatherAdjust) goal *= WEATHER_MULTIPLIER;
+  return Math.round(goal);
 }
 
 export const useHydrationStore = create<HydrationState & HydrationActions>()(
@@ -47,6 +59,8 @@ export const useHydrationStore = create<HydrationState & HydrationActions>()(
         weightKg: null,
         recommendedGoal: DEFAULT_GOAL_ML,
         customGoal: null,
+        activityLevel: 'moderate' as ActivityLevel,
+        weatherAdjust: false,
       },
       notifications: {
         enabled: false,
@@ -131,9 +145,7 @@ export const useHydrationStore = create<HydrationState & HydrationActions>()(
 
       setWeight: (weightKg: number | null) =>
         set((state) => {
-          const recommendedGoal = weightKg
-            ? Math.round(weightKg * WEIGHT_TO_ML_FACTOR)
-            : DEFAULT_GOAL_ML;
+          const recommendedGoal = calcRecommendedGoal(weightKg, state.userProfile.activityLevel, state.userProfile.weatherAdjust);
           const newGoal = state.userProfile.customGoal ?? recommendedGoal;
           return {
             userProfile: {
@@ -154,6 +166,32 @@ export const useHydrationStore = create<HydrationState & HydrationActions>()(
           goalMl: goalMl ?? state.userProfile.recommendedGoal,
         })),
 
+      setActivityLevel: (level: ActivityLevel) =>
+        set((state) => {
+          const recommendedGoal = calcRecommendedGoal(state.userProfile.weightKg, level, state.userProfile.weatherAdjust);
+          return {
+            userProfile: {
+              ...state.userProfile,
+              activityLevel: level,
+              recommendedGoal,
+            },
+            goalMl: state.userProfile.customGoal ?? recommendedGoal,
+          };
+        }),
+
+      setWeatherAdjust: (enabled: boolean) =>
+        set((state) => {
+          const recommendedGoal = calcRecommendedGoal(state.userProfile.weightKg, state.userProfile.activityLevel, enabled);
+          return {
+            userProfile: {
+              ...state.userProfile,
+              weatherAdjust: enabled,
+              recommendedGoal,
+            },
+            goalMl: state.userProfile.customGoal ?? recommendedGoal,
+          };
+        }),
+
       setNotifications: (settings: Partial<NotificationSettings>) =>
         set((state) => ({
           notifications: { ...state.notifications, ...settings },
@@ -161,20 +199,32 @@ export const useHydrationStore = create<HydrationState & HydrationActions>()(
     }),
     {
       name: 'hydrio-storage',
-      version: 2,
+      version: 3,
       migrate: (persisted: unknown, version: number) => {
         const state = persisted as HydrationState;
         if (version < 2) {
           return {
             ...state,
-            userProfile: state.userProfile ?? {
+            userProfile: {
               weightKg: null,
               recommendedGoal: state.goalMl ?? DEFAULT_GOAL_ML,
               customGoal: null,
+              activityLevel: 'moderate' as ActivityLevel,
+              weatherAdjust: false,
             },
             notifications: state.notifications ?? {
               enabled: false,
               intervalMinutes: DEFAULT_REMINDER_INTERVAL,
+            },
+          };
+        }
+        if (version < 3) {
+          return {
+            ...state,
+            userProfile: {
+              ...state.userProfile,
+              activityLevel: state.userProfile?.activityLevel ?? 'moderate',
+              weatherAdjust: state.userProfile?.weatherAdjust ?? false,
             },
           };
         }

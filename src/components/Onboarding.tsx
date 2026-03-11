@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useHydrationStore } from '../store/useHydrationStore';
+import { getActivityLabel } from '../services/hydrationRecommendationService';
+import type { ActivityLevel } from '../types';
 import {
   MIN_GOAL_ML,
   MAX_GOAL_ML,
@@ -7,36 +9,49 @@ import {
   MIN_WEIGHT_KG,
   MAX_WEIGHT_KG,
   WEIGHT_TO_ML_FACTOR,
+  ACTIVITY_MULTIPLIERS,
 } from '../types';
 
 interface OnboardingProps {
   onComplete: () => void;
 }
 
-const STEPS = ['welcome', 'weight', 'goal', 'quickadd', 'ready'] as const;
+const STEPS = ['welcome', 'weight', 'activity', 'goal', 'quickadd', 'ready'] as const;
+const ACTIVITY_LEVELS: ActivityLevel[] = ['sedentary', 'moderate', 'active'];
+const ACTIVITY_DESCRIPTIONS: Record<ActivityLevel, string> = {
+  sedentary: 'Mostly sitting, little exercise',
+  moderate: 'Some exercise, walking regularly',
+  active: 'Frequent exercise, physically demanding',
+};
 
 export function Onboarding({ onComplete }: OnboardingProps) {
   const [step, setStep] = useState(0);
   const [weightInput, setWeightInput] = useState('');
+  const [activityInput, setActivityInput] = useState<ActivityLevel>('moderate');
   const [goalInput, setGoalInput] = useState(String(DEFAULT_GOAL_ML));
   const [useCustomGoal, setUseCustomGoal] = useState(false);
   const setGoal = useHydrationStore((s) => s.setGoal);
   const setWeight = useHydrationStore((s) => s.setWeight);
   const setCustomGoal = useHydrationStore((s) => s.setCustomGoal);
+  const setActivityLevel = useHydrationStore((s) => s.setActivityLevel);
 
   const current = STEPS[step];
 
   const weightKg = parseFloat(weightInput);
   const hasValidWeight = !isNaN(weightKg) && weightKg >= MIN_WEIGHT_KG && weightKg <= MAX_WEIGHT_KG;
-  const recommendedGoal = hasValidWeight ? Math.round(weightKg * WEIGHT_TO_ML_FACTOR) : DEFAULT_GOAL_ML;
+  const baseGoal = hasValidWeight ? Math.round(weightKg * WEIGHT_TO_ML_FACTOR) : DEFAULT_GOAL_ML;
+  const recommendedGoal = Math.round(baseGoal * ACTIVITY_MULTIPLIERS[activityInput]);
 
   const next = () => {
     if (current === 'weight') {
       if (hasValidWeight) {
         setWeight(weightKg);
-        if (!useCustomGoal) {
-          setGoalInput(String(recommendedGoal));
-        }
+      }
+    }
+    if (current === 'activity') {
+      setActivityLevel(activityInput);
+      if (!useCustomGoal) {
+        setGoalInput(String(recommendedGoal));
       }
     }
     if (current === 'goal') {
@@ -105,7 +120,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
             {hasValidWeight && (
               <div className="mt-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 px-4 py-3">
                 <p className="text-sm text-blue-700 dark:text-blue-300">
-                  Recommended intake: <span className="font-semibold">{recommendedGoal} ml/day</span>
+                  Base intake: <span className="font-semibold">{baseGoal} ml/day</span>
                 </p>
                 <p className="mt-1 text-xs text-blue-500 dark:text-blue-400">
                   Based on {weightKg} kg x {WEIGHT_TO_ML_FACTOR} ml/kg
@@ -115,6 +130,46 @@ export function Onboarding({ onComplete }: OnboardingProps) {
             <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">
               Optional — you can skip and set a goal manually.
             </p>
+          </div>
+        )}
+
+        {current === 'activity' && (
+          <div className="text-center">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white">Activity Level</h2>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              Your activity level helps us adjust your hydration goal.
+            </p>
+            <div className="mt-6 space-y-2">
+              {ACTIVITY_LEVELS.map((level) => (
+                <button
+                  key={level}
+                  onClick={() => setActivityInput(level)}
+                  className={`w-full rounded-xl px-4 py-3 text-left transition-colors ${
+                    activityInput === level
+                      ? 'bg-blue-50 border-2 border-blue-500 dark:bg-blue-900/20 dark:border-blue-400'
+                      : 'bg-gray-50 border-2 border-transparent dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  <p className={`text-sm font-semibold ${
+                    activityInput === level
+                      ? 'text-blue-700 dark:text-blue-300'
+                      : 'text-gray-700 dark:text-gray-300'
+                  }`}>
+                    {getActivityLabel(level)}
+                  </p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500">
+                    {ACTIVITY_DESCRIPTIONS[level]}
+                  </p>
+                </button>
+              ))}
+            </div>
+            {hasValidWeight && (
+              <div className="mt-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 px-4 py-2">
+                <p className="text-xs text-blue-600 dark:text-blue-400">
+                  Adjusted recommendation: <span className="font-semibold">{recommendedGoal} ml/day</span>
+                </p>
+              </div>
+            )}
           </div>
         )}
 
@@ -224,7 +279,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
             </p>
             {hasValidWeight && (
               <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
-                Based on your weight of {weightKg} kg
+                Based on your weight ({weightKg} kg) and {getActivityLabel(activityInput).toLowerCase()} activity
               </p>
             )}
           </div>
