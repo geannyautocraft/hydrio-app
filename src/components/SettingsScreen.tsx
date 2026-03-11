@@ -2,8 +2,11 @@ import { useState } from 'react';
 import { useHydrationStore } from '../store/useHydrationStore';
 import { useNotifications } from '../hooks/useNotifications';
 import { useAdaptiveGoal } from '../hooks/useAdaptiveGoal';
+import { usePremium } from '../hooks/usePremium';
 import { useThemeStore } from '../store/useThemeStore';
 import { getActivityLabel } from '../services/hydrationRecommendationService';
+import { ProfileSwitcher } from './ProfileSwitcher';
+import { UpgradeModal } from './UpgradeModal';
 import type { ActivityLevel } from '../types';
 import {
   MIN_GOAL_ML,
@@ -39,8 +42,10 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
 
   const notifications = useNotifications();
   const breakdown = useAdaptiveGoal();
+  const { isPremium } = usePremium();
   const dark = useThemeStore((s) => s.dark);
   const toggleDark = useThemeStore((s) => s.toggle);
+  const [showUpgrade, setShowUpgrade] = useState(false);
 
   const [weightValue, setWeightValue] = useState(
     userProfile.weightKg ? String(userProfile.weightKg) : ''
@@ -368,6 +373,20 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
           </div>
         </div>
 
+        {/* Hydration Profiles */}
+        <ProfileSwitcher />
+
+        {/* Premium */}
+        {!isPremium && (
+          <button
+            type="button"
+            onClick={() => setShowUpgrade(true)}
+            className="w-full rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:from-amber-600 hover:to-orange-600 active:scale-[0.98]"
+          >
+            Upgrade to Premium
+          </button>
+        )}
+
         {error && <p className="text-xs text-red-500">{error}</p>}
 
         <div className="flex gap-2 pt-1">
@@ -386,6 +405,7 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
           </button>
         </div>
       </form>
+      {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} />}
     </div>
   );
 }

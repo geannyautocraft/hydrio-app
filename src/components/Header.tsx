@@ -1,6 +1,7 @@
 import { formatDate, getTodayKey } from '../utils/date';
 import { useHydrationStore, useTodayRecord } from '../store/useHydrationStore';
 import { DarkModeToggle } from './DarkModeToggle';
+import { PremiumBadge } from './PremiumBadge';
 
 interface HeaderProps {
   onToggleSettings: () => void;
@@ -20,7 +21,10 @@ export function Header({ onToggleSettings, settingsOpen }: HeaderProps) {
   return (
     <header className="flex items-center justify-between pb-2 pt-4">
       <div>
-        <h1 className="text-2xl font-bold text-blue-600">Hydrio</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-blue-600">Hydrio</h1>
+          <PremiumBadge />
+        </div>
         <p className="text-sm text-gray-400">{subtitle}</p>
       </div>
       <div className="flex items-center gap-1">

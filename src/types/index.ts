@@ -54,3 +54,42 @@ export const ACTIVITY_MULTIPLIERS: Record<ActivityLevel, number> = {
 };
 
 export const WEATHER_MULTIPLIER = 1.1;
+
+// Premium types
+export type PlanType = 'free' | 'premium';
+
+export interface PremiumState {
+  plan: PlanType;
+}
+
+export type PremiumFeature =
+  | 'advanced_insights'
+  | 'extended_history'
+  | 'data_export'
+  | 'advanced_charts'
+  | 'multiple_profiles';
+
+export const PREMIUM_FEATURES: Record<PremiumFeature, { label: string; description: string }> = {
+  advanced_insights: { label: 'Advanced Insights', description: 'Deeper analysis of your hydration patterns' },
+  extended_history: { label: 'Extended History', description: 'Browse 30-day and all-time history' },
+  data_export: { label: 'Data Export', description: 'Export your data as JSON or CSV' },
+  advanced_charts: { label: 'Advanced Charts', description: 'Monthly trends and goal comparison charts' },
+  multiple_profiles: { label: 'Multiple Profiles', description: 'Create profiles for different routines' },
+};
+
+// Profile types
+export interface HydrationProfile {
+  id: string;
+  name: string;
+  goalMl: number;
+  activityLevel: ActivityLevel;
+  reminderInterval: number;
+  icon: string;
+}
+
+export const DEFAULT_PROFILES: HydrationProfile[] = [
+  { id: 'default', name: 'Default', goalMl: 2000, activityLevel: 'moderate', reminderInterval: 120, icon: '💧' },
+  { id: 'workday', name: 'Workday', goalMl: 2500, activityLevel: 'sedentary', reminderInterval: 90, icon: '💼' },
+  { id: 'workout', name: 'Workout Days', goalMl: 3500, activityLevel: 'active', reminderInterval: 60, icon: '🏋️' },
+  { id: 'summer', name: 'Summer Routine', goalMl: 3000, activityLevel: 'moderate', reminderInterval: 60, icon: '☀️' },
+];

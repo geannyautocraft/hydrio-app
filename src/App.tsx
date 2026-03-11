@@ -14,6 +14,10 @@ import { WeeklyChart } from './components/WeeklyChart';
 import { HydrationHeatmap } from './components/HydrationHeatmap';
 import { AchievementsSection } from './components/AchievementsSection';
 import { Onboarding } from './components/Onboarding';
+import { ExtendedHistory } from './components/ExtendedHistory';
+import { AdvancedCharts } from './components/AdvancedCharts';
+import { ExportData } from './components/ExportData';
+import { WeeklyChallenge, EndOfDaySummary, ConsistencyMessage } from './components/RetentionCards';
 import { useMidnightReset } from './hooks/useMidnightReset';
 import { useNotifications } from './hooks/useNotifications';
 import { useThemeStore } from './store/useThemeStore';
@@ -61,17 +65,23 @@ export default function App() {
 
       <div className="mt-2 space-y-3">
         <HydrationStatusCard />
+        <ConsistencyMessage />
         <HydrationInsights />
         <QuickAddButtons />
         <CustomWaterInput />
       </div>
 
       <div className="mt-6 space-y-4">
+        <EndOfDaySummary />
+        <WeeklyChallenge />
         <DailyLogList />
         <WeeklyChart />
+        <AdvancedCharts />
         <HydrationHeatmap />
         <AchievementsSection />
         <HydrationHistory />
+        <ExtendedHistory />
+        <ExportData />
         <InsightsPanel />
         <HydrationStats />
       </div>
