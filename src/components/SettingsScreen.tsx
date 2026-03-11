@@ -267,10 +267,14 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
 
         <ProfileSwitcher />
 
-        {!isPremium && (
+        {!isPremium ? (
           <button type="button" onClick={() => setShowUpgrade(true)} className="w-full rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:from-amber-600 hover:to-orange-600 active:scale-[0.98]">
             {t('settings.upgradePremium')}
           </button>
+        ) : (
+          <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-center dark:border-green-800 dark:bg-green-900/20">
+            <p className="text-sm font-medium text-green-700 dark:text-green-400">{t('settings.premiumActive')}</p>
+          </div>
         )}
 
         {error && <p className="text-xs text-red-500">{error}</p>}

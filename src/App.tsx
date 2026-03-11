@@ -17,6 +17,9 @@ import { Onboarding } from './components/Onboarding';
 import { ExtendedHistory } from './components/ExtendedHistory';
 import { AdvancedCharts } from './components/AdvancedCharts';
 import { ExportData } from './components/ExportData';
+import { CoachCard } from './components/CoachCard';
+import { AdvancedInsights } from './components/AdvancedInsights';
+import { InstallPrompt } from './components/InstallPrompt';
 import { WeeklyChallenge, EndOfDaySummary, ConsistencyMessage } from './components/RetentionCards';
 import { useMidnightReset } from './hooks/useMidnightReset';
 import { useNotifications } from './hooks/useNotifications';
@@ -66,12 +69,14 @@ export default function App() {
       <div className="mt-2 space-y-3">
         <HydrationStatusCard />
         <ConsistencyMessage />
+        <CoachCard />
         <HydrationInsights />
         <QuickAddButtons />
         <CustomWaterInput />
       </div>
 
       <div className="mt-6 space-y-4">
+        <InstallPrompt />
         <EndOfDaySummary />
         <WeeklyChallenge />
         <DailyLogList />
@@ -81,6 +86,7 @@ export default function App() {
         <AchievementsSection />
         <HydrationHistory />
         <ExtendedHistory />
+        <AdvancedInsights />
         <ExportData />
         <InsightsPanel />
         <HydrationStats />

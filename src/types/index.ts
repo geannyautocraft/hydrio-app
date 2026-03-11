@@ -56,10 +56,12 @@ export const ACTIVITY_MULTIPLIERS: Record<ActivityLevel, number> = {
 export const WEATHER_MULTIPLIER = 1.1;
 
 // Premium types
-export type PlanType = 'free' | 'premium';
+export type PlanType = 'free' | 'premium_subscription' | 'lifetime';
 
 export interface PremiumState {
   plan: PlanType;
+  subscribedAt?: string;
+  billingCycle?: 'monthly' | 'yearly';
 }
 
 export type PremiumFeature =
@@ -67,15 +69,31 @@ export type PremiumFeature =
   | 'extended_history'
   | 'data_export'
   | 'advanced_charts'
-  | 'multiple_profiles';
+  | 'multiple_profiles'
+  | 'smart_coach';
 
 export const PREMIUM_FEATURES: Record<PremiumFeature, { label: string; description: string }> = {
-  advanced_insights: { label: 'Advanced Insights', description: 'Deeper analysis of your hydration patterns' },
-  extended_history: { label: 'Extended History', description: 'Browse 30-day and all-time history' },
+  smart_coach: { label: 'Smart Hydration Coach', description: 'Personalized coaching and recommendations' },
+  advanced_insights: { label: 'Advanced Insights', description: 'Consistency score, monthly trends, and statistics' },
+  extended_history: { label: 'Unlimited History', description: 'Browse your full hydration history' },
   data_export: { label: 'Data Export', description: 'Export your data as JSON or CSV' },
   advanced_charts: { label: 'Advanced Charts', description: 'Monthly trends and goal comparison charts' },
   multiple_profiles: { label: 'Multiple Profiles', description: 'Create profiles for different routines' },
 };
+
+export const PREMIUM_PRICING = {
+  monthly: { price: 2.99, label: '$2.99/month' },
+  yearly: { price: 14.99, label: '$14.99/year', savings: '58%' },
+  lifetime: { price: 9.99, label: '$9.99 once' },
+} as const;
+
+// Analytics event types
+export type AnalyticsEvent =
+  | 'water_logged'
+  | 'goal_reached'
+  | 'premium_prompt_opened'
+  | 'premium_upgrade_clicked'
+  | 'coach_suggestion_shown';
 
 // Profile types
 export interface HydrationProfile {

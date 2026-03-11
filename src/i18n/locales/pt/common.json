@@ -76,6 +76,7 @@
     "notSupported": "Não suportado neste navegador",
     "darkMode": "Modo escuro",
     "upgradePremium": "Atualizar para Premium",
+    "premiumActive": "Premium Ativo",
     "save": "Salvar",
     "cancel": "Cancelar",
     "goalError": "A meta deve ser entre {{min}} e {{max}} ml",
@@ -186,16 +187,48 @@
     "unlockFeatures": "Desbloquear Recursos Premium",
     "maybeLater": "Talvez Depois",
     "pro": "PRO",
+    "smart_coach": "Coach de Hidratação Inteligente",
+    "smart_coach_desc": "Coaching personalizado e recomendações em tempo real",
     "advanced_insights": "Insights Avançados",
-    "advanced_insights_desc": "Análise mais profunda dos seus padrões de hidratação",
-    "extended_history": "Histórico Estendido",
-    "extended_history_desc": "Navegue pelo histórico de 30 dias e completo",
+    "advanced_insights_desc": "Pontuação de consistência, tendências mensais e análise profunda",
+    "extended_history": "Histórico Ilimitado",
+    "extended_history_desc": "Navegue pelo seu histórico completo sem limites",
     "data_export": "Exportação de Dados",
     "data_export_desc": "Exporte seus dados como JSON ou CSV",
     "advanced_charts": "Gráficos Avançados",
     "advanced_charts_desc": "Tendências mensais e gráficos de comparação de metas",
     "multiple_profiles": "Múltiplos Perfis",
-    "multiple_profiles_desc": "Crie perfis para diferentes rotinas"
+    "multiple_profiles_desc": "Crie perfis para diferentes rotinas",
+    "upgradeMonthly": "Assinar Mensal",
+    "upgradeYearly": "Assinar Anual",
+    "lifetimeAccess": "Acesso Vitalício",
+    "bestValue": "Melhor Valor",
+    "save58": "Economize 58%",
+    "month": "mês",
+    "year": "ano",
+    "oneTime": "pagamento único"
+  },
+  "coach": {
+    "title": "Coach de Hidratação Inteligente",
+    "previewMessage": "Beba 250 ml agora para manter o ritmo.",
+    "unlockCoach": "Desbloquear Coach Inteligente",
+    "goalCompleted": "Você atingiu sua meta! Ótimo trabalho hoje.",
+    "behindSchedule": "Você está atrasado no seu cronograma de hidratação.",
+    "drinkNow": "Beba {{amount}} ml agora para manter o ritmo.",
+    "paceEstimate": "Nesse ritmo, você atingirá sua meta às {{time}}.",
+    "needToPickUp": "Acelere o ritmo — mire em {{mlPerHour}} ml/hora.",
+    "onTrack": "Você está no caminho certo! Continue assim."
+  },
+  "advancedInsights": {
+    "title": "Insights Avançados",
+    "needMoreData": "Rastreie por pelo menos 3 dias para ver insights.",
+    "consistencyScore": "Pontuação de Consistência",
+    "monthlyTrends": "Tendências Mensais",
+    "mlAvg": "ml média",
+    "goalHitRate": "Taxa de metas",
+    "overallAvg": "Média geral",
+    "bestDay": "Melhor dia",
+    "activeDays": "Dias ativos"
   },
   "extendedHistory": {
     "title": "Histórico Estendido",
@@ -205,7 +238,8 @@
     "avgPerDay": "Média ml/dia",
     "totalMl": "Total ml",
     "goalRate": "Taxa de meta",
-    "noData": "Sem dados ainda"
+    "noData": "Sem dados ainda",
+    "unlockFull": "Desbloquear histórico completo"
   },
   "advancedCharts": {
     "title": "Gráficos Avançados",
@@ -248,5 +282,11 @@
     "doingWell": "Você está indo bem! Mas um gole não faz mal 💧",
     "keepMomentum": "Mantenha o ritmo!",
     "stayConsistent": "Mantenha a consistência — beba um pouco de água."
+  },
+  "install": {
+    "title": "Instalar Hydrio",
+    "description": "Adicione o Hydrio à sua tela inicial para acesso rápido e suporte offline.",
+    "button": "Instalar App",
+    "dismiss": "Agora não"
   }
 }
