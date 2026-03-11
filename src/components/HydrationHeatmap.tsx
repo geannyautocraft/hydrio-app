@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useHydrationStore } from '../store/useHydrationStore';
 
 interface HeatmapDay {
@@ -24,23 +25,12 @@ function getLevel(percentage: number): 0 | 1 | 2 | 3 | 4 {
 }
 
 const LEVEL_COLORS = {
-  light: [
-    'bg-gray-100',
-    'bg-blue-100',
-    'bg-blue-200',
-    'bg-blue-400',
-    'bg-blue-600',
-  ],
-  dark: [
-    'dark:bg-gray-700',
-    'dark:bg-blue-900/40',
-    'dark:bg-blue-800/60',
-    'dark:bg-blue-600/80',
-    'dark:bg-blue-500',
-  ],
+  light: ['bg-gray-100', 'bg-blue-100', 'bg-blue-200', 'bg-blue-400', 'bg-blue-600'],
+  dark: ['dark:bg-gray-700', 'dark:bg-blue-900/40', 'dark:bg-blue-800/60', 'dark:bg-blue-600/80', 'dark:bg-blue-500'],
 };
 
 export function HydrationHeatmap() {
+  const { t } = useTranslation();
   const records = useHydrationStore((s) => s.records);
   const goalMl = useHydrationStore((s) => s.goalMl);
 
@@ -54,47 +44,27 @@ export function HydrationHeatmap() {
       const record = records[dateKey];
       const totalMl = record?.totalMl ?? 0;
       const percentage = goalMl > 0 ? Math.round((totalMl / goalMl) * 100) : 0;
-      result.push({
-        dateKey,
-        dayOfMonth: date.getDate(),
-        percentage,
-        level: getLevel(percentage),
-      });
+      result.push({ dateKey, dayOfMonth: date.getDate(), percentage, level: getLevel(percentage) });
     }
     return result;
   }, [records, goalMl]);
 
   return (
     <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
-        Last 30 Days
-      </h3>
-
+      <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">{t('heatmap.title')}</h3>
       <div className="grid grid-cols-10 gap-1">
         {days.map((day) => (
-          <div
-            key={day.dateKey}
-            title={`${day.dateKey}: ${day.percentage}%`}
-            className={`flex h-7 items-center justify-center rounded text-[10px] font-medium transition-colors ${
-              LEVEL_COLORS.light[day.level]
-            } ${LEVEL_COLORS.dark[day.level]} ${
-              day.level >= 3 ? 'text-white' : 'text-gray-500 dark:text-gray-400'
-            }`}
-          >
+          <div key={day.dateKey} title={`${day.dateKey}: ${day.percentage}%`} className={`flex h-7 items-center justify-center rounded text-[10px] font-medium transition-colors ${LEVEL_COLORS.light[day.level]} ${LEVEL_COLORS.dark[day.level]} ${day.level >= 3 ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`}>
             {day.dayOfMonth}
           </div>
         ))}
       </div>
-
       <div className="mt-3 flex items-center justify-end gap-1.5">
-        <span className="text-[10px] text-gray-400">Less</span>
+        <span className="text-[10px] text-gray-400">{t('heatmap.less')}</span>
         {[0, 1, 2, 3, 4].map((level) => (
-          <div
-            key={level}
-            className={`h-3 w-3 rounded-sm ${LEVEL_COLORS.light[level]} ${LEVEL_COLORS.dark[level]}`}
-          />
+          <div key={level} className={`h-3 w-3 rounded-sm ${LEVEL_COLORS.light[level]} ${LEVEL_COLORS.dark[level]}`} />
         ))}
-        <span className="text-[10px] text-gray-400">More</span>
+        <span className="text-[10px] text-gray-400">{t('heatmap.more')}</span>
       </div>
     </div>
   );

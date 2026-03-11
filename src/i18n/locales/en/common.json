@@ -1,0 +1,252 @@
+{
+  "dashboard": {
+    "mlToday": "{{current}} ml today · {{percentage}}%"
+  },
+  "progress": {
+    "of": "of {{goal}} ml",
+    "startDay": "Start your day with a glass of water",
+    "tooMuch": "That's a lot! Stay balanced",
+    "wellHydrated": "You're well hydrated today",
+    "goalReached": "Goal reached! Great job",
+    "almostThere": "Almost there! Only {{remaining}} ml left",
+    "needMore": "You need {{remaining}} ml to reach your goal",
+    "mlLeft": "{{remaining}} ml left"
+  },
+  "status": {
+    "startJourney": "Start your hydration journey today",
+    "goalCompleted": "Goal completed — keep it up 🎉",
+    "doingGreat": "You're doing great today!",
+    "halfway": "Halfway there — keep going!",
+    "goodStart": "Good start, keep sipping!",
+    "everySip": "Every sip counts — stay hydrated",
+    "mlRemaining": "{{remaining}} ml remaining"
+  },
+  "insights": {
+    "startDay": "Start your day with a glass of water!",
+    "aboveGoal": "You're significantly above your goal. Stay balanced.",
+    "wellAbove": "That's well above your goal. You're very hydrated!",
+    "goalReached": "Goal reached! Great hydration today!",
+    "drinkToReach": "If you drink {{amount}} ml now, you'll reach your goal!",
+    "almostThere": "Almost there! Only {{remaining}} ml to go.",
+    "awayFromGoal": "You are {{remaining}} ml away from your goal."
+  },
+  "prediction": {
+    "goalReached": "Goal reached! Great job today.",
+    "onTrack": "At this pace, you'll reach your goal by {{time}}.",
+    "fallShort": "You may fall short of your goal today."
+  },
+  "suggestions": {
+    "awayFromGoal": "You are {{remaining}} ml away from your goal.",
+    "drinkNow": "Drink {{amount}} ml now to stay on track."
+  },
+  "input": {
+    "placeholder": "Custom amount (ml)",
+    "add": "Add",
+    "invalidAmount": "Enter a valid amount",
+    "maxAmount": "Max {{max}} ml per entry"
+  },
+  "log": {
+    "title": "Today's Log",
+    "entry": "{{count}} entry",
+    "entries": "{{count}} entries",
+    "empty": "No water logged yet today.",
+    "deleteConfirm": "Delete?",
+    "no": "No",
+    "clickToEdit": "Click to edit"
+  },
+  "settings": {
+    "title": "Settings",
+    "bodyWeight": "Body Weight (kg)",
+    "weightPlaceholder": "e.g. 70",
+    "activityLevel": "Activity Level",
+    "weatherAdjustment": "Weather adjustment",
+    "weatherDescription": "Add 10% for hot/humid days",
+    "recommendedGoal": "Recommended Goal: {{goal}} ml/day",
+    "baseGoal": "Base: {{base}} ml ({{weight}} kg x 35 ml)",
+    "activityAdjustmentAmount": "Activity: +{{amount}} ml",
+    "weatherAdjustmentAmount": "Weather: +{{amount}} ml",
+    "dailyGoal": "Daily Goal (ml)",
+    "recommended": "Recommended",
+    "custom": "Custom",
+    "quickPresets": "Quick Add Presets (ml)",
+    "addPreset": "+ Add preset",
+    "reminders": "Hydration Reminders",
+    "remindersOn": "Reminders on",
+    "remindersOff": "Reminders off",
+    "notSupported": "Not supported in this browser",
+    "darkMode": "Dark mode",
+    "upgradePremium": "Upgrade to Premium",
+    "save": "Save",
+    "cancel": "Cancel",
+    "goalError": "Goal must be between {{min}} and {{max}} ml",
+    "presetError": "Presets must be between 1 and {{max}} ml",
+    "language": "Language",
+    "interval30min": "30 min",
+    "interval1hr": "1 hr",
+    "interval2hr": "2 hr",
+    "interval3hr": "3 hr"
+  },
+  "activity": {
+    "sedentary": "Sedentary",
+    "moderate": "Moderate",
+    "active": "Active",
+    "sedentaryDesc": "Mostly sitting, little exercise",
+    "moderateDesc": "Some exercise, walking regularly",
+    "activeDesc": "Frequent exercise, physically demanding"
+  },
+  "onboarding": {
+    "welcome": "Welcome to Hydrio",
+    "welcomeDesc": "Your personal hydration tracker. Let's set up your profile in a few quick steps.",
+    "weightTitle": "Your Body Weight",
+    "weightDesc": "We'll use this to calculate your recommended daily water intake.",
+    "kg": "kg",
+    "baseIntake": "Base intake: {{amount}} ml/day",
+    "basedOn": "Based on {{weight}} kg x {{factor}} ml/kg",
+    "optional": "Optional — you can skip and set a goal manually.",
+    "activityTitle": "Activity Level",
+    "activityDesc": "Your activity level helps us adjust your hydration goal.",
+    "adjustedRecommendation": "Adjusted recommendation: {{amount}} ml/day",
+    "goalTitle": "Set Your Daily Goal",
+    "goalDesc": "How much water do you want to drink each day?",
+    "recommendedGoal": "Recommended ({{amount}} ml)",
+    "custom": "Custom",
+    "mlPerDay": "ml / day",
+    "quickAddTitle": "Quick Add Buttons",
+    "quickAddDesc": "Tap these buttons on the dashboard to quickly log water intake.",
+    "ml": "ml",
+    "customizeLater": "You can customize these amounts later in settings.",
+    "readyTitle": "You're All Set!",
+    "readyDesc": "Start tracking your hydration and stay healthy. Your goal is",
+    "readyGoal": "{{amount}} ml",
+    "perDay": "per day.",
+    "basedOnWeight": "Based on your weight ({{weight}} kg) and {{activity}} activity",
+    "startTracking": "Start Tracking",
+    "continue": "Continue",
+    "skip": "Skip",
+    "back": "Back"
+  },
+  "history": {
+    "title": "History"
+  },
+  "stats": {
+    "title": "Statistics",
+    "dailyAvg": "Daily avg",
+    "bestDay": "Best day",
+    "streak": "Streak",
+    "day": "{{count}} day",
+    "days": "{{count}} days"
+  },
+  "chart": {
+    "weeklyOverview": "Weekly Overview",
+    "goal": "Goal"
+  },
+  "heatmap": {
+    "title": "Last 30 Days",
+    "less": "Less",
+    "more": "More"
+  },
+  "achievements": {
+    "title": "Achievements",
+    "first_log": "First Drop",
+    "first_log_desc": "Log your first water entry",
+    "goal_reached": "Goal Crusher",
+    "goal_reached_desc": "Reach your daily goal",
+    "streak_3": "Hat Trick",
+    "streak_3_desc": "Reach your goal 3 days in a row",
+    "streak_7": "Week Warrior",
+    "streak_7_desc": "Reach your goal 7 days in a row",
+    "morning_log": "Early Bird",
+    "morning_log_desc": "Log water before 8 AM",
+    "best_day": "Overachiever",
+    "best_day_desc": "Drink 150% of your goal in a day",
+    "perfect_week": "Perfect Week",
+    "perfect_week_desc": "Reach your goal every day for a week"
+  },
+  "retention": {
+    "weeklyChallenge": "Weekly Goal Challenge",
+    "perfectWeek": "Perfect week! Amazing work!",
+    "completedGoal": "You completed your goal {{completed}} out of {{total}} days",
+    "almostThere": "Almost there! Keep going for a perfect week!",
+    "greatJobToday": "Great job today!",
+    "endOfDay": "End of Day Summary",
+    "mlTotal": "ml total",
+    "entries": "entries",
+    "ofGoal": "of goal",
+    "mlLeftToGoal": "{{remaining}} ml left to reach your goal",
+    "perfectConsistency": "Perfect hydration consistency this week!",
+    "greatConsistency": "Great consistency! You're building a strong habit.",
+    "goodProgress": "Good progress! Try to stay consistent every day.",
+    "trackingRegularly": "You're tracking regularly. Try to hit your goal more often!"
+  },
+  "premium": {
+    "label": "Premium",
+    "unlock": "Unlock",
+    "upgradeTitle": "Upgrade to Premium",
+    "upgradeDesc": "Unlock the full Hydrio experience",
+    "unlockFeatures": "Unlock Premium Features",
+    "maybeLater": "Maybe Later",
+    "pro": "PRO",
+    "advanced_insights": "Advanced Insights",
+    "advanced_insights_desc": "Deeper analysis of your hydration patterns",
+    "extended_history": "Extended History",
+    "extended_history_desc": "Browse 30-day and all-time history",
+    "data_export": "Data Export",
+    "data_export_desc": "Export your data as JSON or CSV",
+    "advanced_charts": "Advanced Charts",
+    "advanced_charts_desc": "Monthly trends and goal comparison charts",
+    "multiple_profiles": "Multiple Profiles",
+    "multiple_profiles_desc": "Create profiles for different routines"
+  },
+  "extendedHistory": {
+    "title": "Extended History",
+    "7days": "7 Days",
+    "30days": "30 Days",
+    "allTime": "All Time",
+    "avgPerDay": "Avg ml/day",
+    "totalMl": "Total ml",
+    "goalRate": "Goal rate",
+    "noData": "No data yet"
+  },
+  "advancedCharts": {
+    "title": "Advanced Charts",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "trend": "Trend",
+    "intake": "Intake",
+    "runningAvg": "Running Avg"
+  },
+  "export": {
+    "title": "Export Data",
+    "summary": "{{days}} days, {{entries}} entries",
+    "exportJSON": "Export JSON",
+    "exportCSV": "Export CSV",
+    "success": "{{format}} exported successfully!"
+  },
+  "insightsPanel": {
+    "title": "Insights",
+    "bestDay": "Best day",
+    "currentStreak": "Current streak",
+    "weeklyAvg": "Weekly avg",
+    "goalCompletion": "Goal completion",
+    "daysCount": "{{reached}}/{{total}} days"
+  },
+  "profiles": {
+    "title": "Hydration Profiles",
+    "active": "Active",
+    "addProfile": "+ Add Profile",
+    "profileName": "Profile name",
+    "goalMl": "Goal (ml)",
+    "add": "Add",
+    "cancel": "Cancel"
+  },
+  "notifications": {
+    "timeToHydrate": "Time to hydrate 💧",
+    "smallSip": "A small sip keeps you on track.",
+    "stayHydrated": "Stay hydrated! Drink some water.",
+    "bodyNeeds": "Your body needs water — take a sip!",
+    "hydrationCheck": "Hydration check! Have you had water recently?",
+    "doingWell": "You're doing well! A sip won't hurt though 💧",
+    "keepMomentum": "Keep the momentum going!",
+    "stayConsistent": "Stay consistent — have some water."
+  }
+}

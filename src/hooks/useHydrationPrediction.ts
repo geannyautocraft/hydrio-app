@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useHydrationStore, useTodayRecord } from '../store/useHydrationStore';
 
 export interface HydrationPrediction {
@@ -7,6 +8,7 @@ export interface HydrationPrediction {
 }
 
 export function useHydrationPrediction(): HydrationPrediction | null {
+  const { t } = useTranslation();
   const goalMl = useHydrationStore((s) => s.goalMl);
   const todayRecord = useTodayRecord();
   const currentMl = todayRecord.totalMl;
@@ -14,7 +16,7 @@ export function useHydrationPrediction(): HydrationPrediction | null {
 
   if (entries.length === 0) return null;
   if (currentMl >= goalMl) {
-    return { message: 'Goal reached! Great job today.', onTrack: true, estimatedCompletionTime: null };
+    return { message: t('prediction.goalReached'), onTrack: true, estimatedCompletionTime: null };
   }
 
   const now = new Date();
@@ -38,14 +40,14 @@ export function useHydrationPrediction(): HydrationPrediction | null {
     const completionMin = Math.round((estimatedHour - completionHour) * 60);
     const timeStr = `${String(completionHour).padStart(2, '0')}:${String(completionMin).padStart(2, '0')}`;
     return {
-      message: `At this pace, you'll reach your goal by ${timeStr}.`,
+      message: t('prediction.onTrack', { time: timeStr }),
       onTrack: true,
       estimatedCompletionTime: timeStr,
     };
   }
 
   return {
-    message: "You may fall short of your goal today.",
+    message: t('prediction.fallShort'),
     onTrack: false,
     estimatedCompletionTime: null,
   };

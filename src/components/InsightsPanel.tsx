@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useHydrationStore } from '../store/useHydrationStore';
 import { useHydrationStats } from '../hooks/useHydrationStats';
 import { getDateLabel } from '../utils/date';
 
 export function InsightsPanel() {
+  const { t } = useTranslation();
   const stats = useHydrationStats();
   const records = useHydrationStore((s) => s.records);
   const goalMl = useHydrationStore((s) => s.goalMl);
@@ -12,14 +14,12 @@ export function InsightsPanel() {
     const dates = Object.keys(records).sort();
     if (dates.length < 2) return null;
 
-    // Goal completion rate
     let daysReached = 0;
     for (const date of dates) {
       if (records[date].totalMl >= goalMl) daysReached++;
     }
     const completionRate = Math.round((daysReached / dates.length) * 100);
 
-    // Weekly average (last 7 days)
     const last7 = dates.slice(-7);
     const weeklyTotal = last7.reduce((sum, d) => sum + records[d].totalMl, 0);
     const weeklyAvg = Math.round(weeklyTotal / last7.length);
@@ -29,28 +29,18 @@ export function InsightsPanel() {
 
   if (!insights || stats.totalDays < 2) return null;
 
+  const streakValue = stats.streak > 0
+    ? (stats.streak === 1 ? t('stats.day', { count: stats.streak }) : t('stats.days', { count: stats.streak }))
+    : '—';
+
   return (
     <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
-      <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Insights</h2>
+      <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">{t('insightsPanel.title')}</h2>
       <div className="grid grid-cols-2 gap-3">
-        <InsightItem
-          label="Best day"
-          value={`${stats.bestDayMl.toLocaleString()} ml`}
-          sub={getDateLabel(stats.bestDayDate)}
-        />
-        <InsightItem
-          label="Current streak"
-          value={stats.streak > 0 ? `${stats.streak} day${stats.streak === 1 ? '' : 's'}` : '—'}
-        />
-        <InsightItem
-          label="Weekly avg"
-          value={`${insights.weeklyAvg.toLocaleString()} ml`}
-        />
-        <InsightItem
-          label="Goal completion"
-          value={`${insights.completionRate}%`}
-          sub={`${insights.daysReached}/${insights.totalDays} days`}
-        />
+        <InsightItem label={t('insightsPanel.bestDay')} value={`${stats.bestDayMl.toLocaleString()} ml`} sub={getDateLabel(stats.bestDayDate)} />
+        <InsightItem label={t('insightsPanel.currentStreak')} value={streakValue} />
+        <InsightItem label={t('insightsPanel.weeklyAvg')} value={`${insights.weeklyAvg.toLocaleString()} ml`} />
+        <InsightItem label={t('insightsPanel.goalCompletion')} value={`${insights.completionRate}%`} sub={t('insightsPanel.daysCount', { reached: insights.daysReached, total: insights.totalDays })} />
       </div>
     </div>
   );

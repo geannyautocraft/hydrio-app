@@ -1,0 +1,252 @@
+{
+  "dashboard": {
+    "mlToday": "{{current}} ml hoje · {{percentage}}%"
+  },
+  "progress": {
+    "of": "de {{goal}} ml",
+    "startDay": "Comece o dia com um copo de água",
+    "tooMuch": "É bastante! Mantenha o equilíbrio",
+    "wellHydrated": "Você está bem hidratado hoje",
+    "goalReached": "Meta atingida! Ótimo trabalho",
+    "almostThere": "Quase lá! Faltam apenas {{remaining}} ml",
+    "needMore": "Você precisa de {{remaining}} ml para atingir sua meta",
+    "mlLeft": "{{remaining}} ml restantes"
+  },
+  "status": {
+    "startJourney": "Comece sua jornada de hidratação hoje",
+    "goalCompleted": "Meta concluída — continue assim 🎉",
+    "doingGreat": "Você está indo muito bem hoje!",
+    "halfway": "Na metade do caminho — continue!",
+    "goodStart": "Bom começo, continue bebendo!",
+    "everySip": "Cada gole conta — mantenha-se hidratado",
+    "mlRemaining": "{{remaining}} ml restantes"
+  },
+  "insights": {
+    "startDay": "Comece o dia com um copo de água!",
+    "aboveGoal": "Você está significativamente acima da meta. Mantenha o equilíbrio.",
+    "wellAbove": "Bem acima da meta. Você está muito hidratado!",
+    "goalReached": "Meta atingida! Ótima hidratação hoje!",
+    "drinkToReach": "Se beber {{amount}} ml agora, você atingirá sua meta!",
+    "almostThere": "Quase lá! Faltam apenas {{remaining}} ml.",
+    "awayFromGoal": "Faltam {{remaining}} ml para sua meta."
+  },
+  "prediction": {
+    "goalReached": "Meta atingida! Ótimo trabalho hoje.",
+    "onTrack": "Nesse ritmo, você atingirá sua meta às {{time}}.",
+    "fallShort": "Você pode não atingir sua meta hoje."
+  },
+  "suggestions": {
+    "awayFromGoal": "Faltam {{remaining}} ml para sua meta.",
+    "drinkNow": "Beba {{amount}} ml agora para manter o ritmo."
+  },
+  "input": {
+    "placeholder": "Quantidade personalizada (ml)",
+    "add": "Adicionar",
+    "invalidAmount": "Insira uma quantidade válida",
+    "maxAmount": "Máximo de {{max}} ml por registro"
+  },
+  "log": {
+    "title": "Registro de Hoje",
+    "entry": "{{count}} registro",
+    "entries": "{{count}} registros",
+    "empty": "Nenhuma água registrada hoje.",
+    "deleteConfirm": "Excluir?",
+    "no": "Não",
+    "clickToEdit": "Clique para editar"
+  },
+  "settings": {
+    "title": "Configurações",
+    "bodyWeight": "Peso Corporal (kg)",
+    "weightPlaceholder": "ex. 70",
+    "activityLevel": "Nível de Atividade",
+    "weatherAdjustment": "Ajuste climático",
+    "weatherDescription": "Adicionar 10% para dias quentes/úmidos",
+    "recommendedGoal": "Meta Recomendada: {{goal}} ml/dia",
+    "baseGoal": "Base: {{base}} ml ({{weight}} kg x 35 ml)",
+    "activityAdjustmentAmount": "Atividade: +{{amount}} ml",
+    "weatherAdjustmentAmount": "Clima: +{{amount}} ml",
+    "dailyGoal": "Meta Diária (ml)",
+    "recommended": "Recomendada",
+    "custom": "Personalizada",
+    "quickPresets": "Atalhos Rápidos (ml)",
+    "addPreset": "+ Adicionar atalho",
+    "reminders": "Lembretes de Hidratação",
+    "remindersOn": "Lembretes ativados",
+    "remindersOff": "Lembretes desativados",
+    "notSupported": "Não suportado neste navegador",
+    "darkMode": "Modo escuro",
+    "upgradePremium": "Atualizar para Premium",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "goalError": "A meta deve ser entre {{min}} e {{max}} ml",
+    "presetError": "Os atalhos devem ser entre 1 e {{max}} ml",
+    "language": "Idioma",
+    "interval30min": "30 min",
+    "interval1hr": "1 h",
+    "interval2hr": "2 h",
+    "interval3hr": "3 h"
+  },
+  "activity": {
+    "sedentary": "Sedentário",
+    "moderate": "Moderado",
+    "active": "Ativo",
+    "sedentaryDesc": "Maioria do tempo sentado, pouco exercício",
+    "moderateDesc": "Algum exercício, caminhadas regulares",
+    "activeDesc": "Exercício frequente, fisicamente exigente"
+  },
+  "onboarding": {
+    "welcome": "Bem-vindo ao Hydrio",
+    "welcomeDesc": "Seu rastreador pessoal de hidratação. Vamos configurar seu perfil em alguns passos rápidos.",
+    "weightTitle": "Seu Peso Corporal",
+    "weightDesc": "Usaremos isso para calcular sua ingestão diária recomendada de água.",
+    "kg": "kg",
+    "baseIntake": "Ingestão base: {{amount}} ml/dia",
+    "basedOn": "Baseado em {{weight}} kg x {{factor}} ml/kg",
+    "optional": "Opcional — você pode pular e definir uma meta manualmente.",
+    "activityTitle": "Nível de Atividade",
+    "activityDesc": "Seu nível de atividade nos ajuda a ajustar sua meta de hidratação.",
+    "adjustedRecommendation": "Recomendação ajustada: {{amount}} ml/dia",
+    "goalTitle": "Defina Sua Meta Diária",
+    "goalDesc": "Quanta água você quer beber por dia?",
+    "recommendedGoal": "Recomendada ({{amount}} ml)",
+    "custom": "Personalizada",
+    "mlPerDay": "ml / dia",
+    "quickAddTitle": "Botões de Adição Rápida",
+    "quickAddDesc": "Toque nestes botões no painel para registrar água rapidamente.",
+    "ml": "ml",
+    "customizeLater": "Você pode personalizar estas quantidades depois nas configurações.",
+    "readyTitle": "Tudo Pronto!",
+    "readyDesc": "Comece a acompanhar sua hidratação e mantenha-se saudável. Sua meta é",
+    "readyGoal": "{{amount}} ml",
+    "perDay": "por dia.",
+    "basedOnWeight": "Baseado no seu peso ({{weight}} kg) e atividade {{activity}}",
+    "startTracking": "Começar a Rastrear",
+    "continue": "Continuar",
+    "skip": "Pular",
+    "back": "Voltar"
+  },
+  "history": {
+    "title": "Histórico"
+  },
+  "stats": {
+    "title": "Estatísticas",
+    "dailyAvg": "Média diária",
+    "bestDay": "Melhor dia",
+    "streak": "Sequência",
+    "day": "{{count}} dia",
+    "days": "{{count}} dias"
+  },
+  "chart": {
+    "weeklyOverview": "Visão Semanal",
+    "goal": "Meta"
+  },
+  "heatmap": {
+    "title": "Últimos 30 Dias",
+    "less": "Menos",
+    "more": "Mais"
+  },
+  "achievements": {
+    "title": "Conquistas",
+    "first_log": "Primeira Gota",
+    "first_log_desc": "Registre sua primeira entrada de água",
+    "goal_reached": "Destruidor de Metas",
+    "goal_reached_desc": "Alcance sua meta diária",
+    "streak_3": "Hat Trick",
+    "streak_3_desc": "Alcance sua meta 3 dias seguidos",
+    "streak_7": "Guerreiro da Semana",
+    "streak_7_desc": "Alcance sua meta 7 dias seguidos",
+    "morning_log": "Madrugador",
+    "morning_log_desc": "Registre água antes das 8h",
+    "best_day": "Superação",
+    "best_day_desc": "Beba 150% da sua meta em um dia",
+    "perfect_week": "Semana Perfeita",
+    "perfect_week_desc": "Alcance sua meta todos os dias por uma semana"
+  },
+  "retention": {
+    "weeklyChallenge": "Desafio Semanal de Metas",
+    "perfectWeek": "Semana perfeita! Trabalho incrível!",
+    "completedGoal": "Você completou sua meta {{completed}} de {{total}} dias",
+    "almostThere": "Quase lá! Continue para uma semana perfeita!",
+    "greatJobToday": "Ótimo trabalho hoje!",
+    "endOfDay": "Resumo do Dia",
+    "mlTotal": "ml total",
+    "entries": "registros",
+    "ofGoal": "da meta",
+    "mlLeftToGoal": "{{remaining}} ml restantes para atingir sua meta",
+    "perfectConsistency": "Consistência perfeita de hidratação esta semana!",
+    "greatConsistency": "Ótima consistência! Você está construindo um hábito forte.",
+    "goodProgress": "Bom progresso! Tente manter a consistência todos os dias.",
+    "trackingRegularly": "Você está rastreando regularmente. Tente atingir sua meta mais vezes!"
+  },
+  "premium": {
+    "label": "Premium",
+    "unlock": "Desbloquear",
+    "upgradeTitle": "Atualizar para Premium",
+    "upgradeDesc": "Desbloqueie a experiência completa do Hydrio",
+    "unlockFeatures": "Desbloquear Recursos Premium",
+    "maybeLater": "Talvez Depois",
+    "pro": "PRO",
+    "advanced_insights": "Insights Avançados",
+    "advanced_insights_desc": "Análise mais profunda dos seus padrões de hidratação",
+    "extended_history": "Histórico Estendido",
+    "extended_history_desc": "Navegue pelo histórico de 30 dias e completo",
+    "data_export": "Exportação de Dados",
+    "data_export_desc": "Exporte seus dados como JSON ou CSV",
+    "advanced_charts": "Gráficos Avançados",
+    "advanced_charts_desc": "Tendências mensais e gráficos de comparação de metas",
+    "multiple_profiles": "Múltiplos Perfis",
+    "multiple_profiles_desc": "Crie perfis para diferentes rotinas"
+  },
+  "extendedHistory": {
+    "title": "Histórico Estendido",
+    "7days": "7 Dias",
+    "30days": "30 Dias",
+    "allTime": "Todo Período",
+    "avgPerDay": "Média ml/dia",
+    "totalMl": "Total ml",
+    "goalRate": "Taxa de meta",
+    "noData": "Sem dados ainda"
+  },
+  "advancedCharts": {
+    "title": "Gráficos Avançados",
+    "weekly": "Semanal",
+    "monthly": "Mensal",
+    "trend": "Tendência",
+    "intake": "Ingestão",
+    "runningAvg": "Média Móvel"
+  },
+  "export": {
+    "title": "Exportar Dados",
+    "summary": "{{days}} dias, {{entries}} registros",
+    "exportJSON": "Exportar JSON",
+    "exportCSV": "Exportar CSV",
+    "success": "{{format}} exportado com sucesso!"
+  },
+  "insightsPanel": {
+    "title": "Insights",
+    "bestDay": "Melhor dia",
+    "currentStreak": "Sequência atual",
+    "weeklyAvg": "Média semanal",
+    "goalCompletion": "Conclusão de meta",
+    "daysCount": "{{reached}}/{{total}} dias"
+  },
+  "profiles": {
+    "title": "Perfis de Hidratação",
+    "active": "Ativo",
+    "addProfile": "+ Adicionar Perfil",
+    "profileName": "Nome do perfil",
+    "goalMl": "Meta (ml)",
+    "add": "Adicionar",
+    "cancel": "Cancelar"
+  },
+  "notifications": {
+    "timeToHydrate": "Hora de se hidratar 💧",
+    "smallSip": "Um pequeno gole mantém você no caminho certo.",
+    "stayHydrated": "Mantenha-se hidratado! Beba um pouco de água.",
+    "bodyNeeds": "Seu corpo precisa de água — tome um gole!",
+    "hydrationCheck": "Verificação de hidratação! Você bebeu água recentemente?",
+    "doingWell": "Você está indo bem! Mas um gole não faz mal 💧",
+    "keepMomentum": "Mantenha o ritmo!",
+    "stayConsistent": "Mantenha a consistência — beba um pouco de água."
+  }
+}

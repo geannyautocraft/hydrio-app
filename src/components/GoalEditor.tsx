@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useHydrationStore } from '../store/useHydrationStore';
 import { useNotifications } from '../hooks/useNotifications';
 import {
@@ -16,13 +17,14 @@ interface GoalEditorProps {
 }
 
 const INTERVAL_OPTIONS = [
-  { label: '30 min', value: 30 },
-  { label: '1 hr', value: 60 },
-  { label: '2 hr', value: 120 },
-  { label: '3 hr', value: 180 },
+  { labelKey: 'settings.interval30min', value: 30 },
+  { labelKey: 'settings.interval1hr', value: 60 },
+  { labelKey: 'settings.interval2hr', value: 120 },
+  { labelKey: 'settings.interval3hr', value: 180 },
 ];
 
 export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
+  const { t } = useTranslation();
   const goalMl = useHydrationStore((s) => s.goalMl);
   const setGoal = useHydrationStore((s) => s.setGoal);
   const quickPresets = useHydrationStore((s) => s.quickPresets);
@@ -53,7 +55,7 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
 
     const parsedGoal = parseInt(goalValue, 10);
     if (isNaN(parsedGoal) || parsedGoal < MIN_GOAL_ML || parsedGoal > MAX_GOAL_ML) {
-      setError(`Goal must be between ${MIN_GOAL_ML} and ${MAX_GOAL_ML} ml`);
+      setError(t('settings.goalError', { min: MIN_GOAL_ML, max: MAX_GOAL_ML }));
       return;
     }
 
@@ -62,7 +64,7 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
       (p) => isNaN(p) || p <= 0 || p > MAX_SINGLE_ENTRY_ML
     );
     if (invalidPreset) {
-      setError(`Presets must be between 1 and ${MAX_SINGLE_ENTRY_ML} ml`);
+      setError(t('settings.presetError', { max: MAX_SINGLE_ENTRY_ML }));
       return;
     }
 
@@ -108,7 +110,7 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
         {/* Weight Input */}
         <div>
           <label htmlFor="weight-input" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Body Weight (kg)
+            {t('settings.bodyWeight')}
           </label>
           <input
             id="weight-input"
@@ -125,12 +127,12 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
                 setGoalValue(String(Math.round(w * WEIGHT_TO_ML_FACTOR)));
               }
             }}
-            placeholder="e.g. 70"
+            placeholder={t('settings.weightPlaceholder')}
             className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm transition-colors focus:border-blue-400 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500"
           />
           {hasValidWeight && (
             <p className="mt-1 text-xs text-blue-500 dark:text-blue-400">
-              Recommended: {recommendedGoal} ml/day ({parsedWeight} kg x {WEIGHT_TO_ML_FACTOR} ml)
+              {t('settings.recommendedGoal', { goal: recommendedGoal })}
             </p>
           )}
         </div>
@@ -138,7 +140,7 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
         {/* Goal Input */}
         <div>
           <label htmlFor="goal-input" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Daily Goal (ml)
+            {t('settings.dailyGoal')}
           </label>
           {hasValidWeight && (
             <div className="mb-2 flex gap-2">
@@ -154,7 +156,7 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
                 }`}
               >
-                Recommended
+                {t('settings.recommended')}
               </button>
               <button
                 type="button"
@@ -165,7 +167,7 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
                 }`}
               >
-                Custom
+                {t('settings.custom')}
               </button>
             </div>
           )}
@@ -188,7 +190,7 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
         {/* Quick Presets */}
         <div>
           <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Quick Add Presets (ml)
+            {t('settings.quickPresets')}
           </label>
           <div className="space-y-2">
             {presetValues.map((val, i) => (
@@ -221,7 +223,7 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
               onClick={addPreset}
               className="mt-2 text-xs font-medium text-blue-500 transition-colors hover:text-blue-700"
             >
-              + Add preset
+              {t('settings.addPreset')}
             </button>
           )}
         </div>
@@ -229,16 +231,16 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
         {/* Notification Settings */}
         <div>
           <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Hydration Reminders
+            {t('settings.reminders')}
           </label>
           <div className="rounded-lg border border-gray-200 dark:border-gray-600 p-3">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-700 dark:text-gray-300">
-                  {notifications.enabled ? 'Reminders on' : 'Reminders off'}
+                  {notifications.enabled ? t('settings.remindersOn') : t('settings.remindersOff')}
                 </p>
                 {!notifications.supported && (
-                  <p className="text-xs text-gray-400">Not supported in this browser</p>
+                  <p className="text-xs text-gray-400">{t('settings.notSupported')}</p>
                 )}
               </div>
               <button
@@ -277,7 +279,7 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
                         : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
                     }`}
                   >
-                    {opt.label}
+                    {t(opt.labelKey)}
                   </button>
                 ))}
               </div>
@@ -294,14 +296,14 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
             type="submit"
             className="flex-1 rounded-lg bg-blue-500 py-2 text-sm font-medium text-white transition-all hover:bg-blue-600 active:scale-[0.98]"
           >
-            Save
+            {t('settings.save')}
           </button>
           <button
             type="button"
             onClick={onClose}
             className="flex-1 rounded-lg border border-gray-200 py-2 text-sm font-medium text-gray-600 transition-all hover:bg-gray-50 active:scale-[0.98] dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
           >
-            Cancel
+            {t('settings.cancel')}
           </button>
         </div>
       </form>

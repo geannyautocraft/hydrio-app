@@ -1,20 +1,23 @@
+import { useTranslation } from 'react-i18next';
 import { useHydrationStats } from '../hooks/useHydrationStats';
 
 export function HydrationStats() {
+  const { t } = useTranslation();
   const stats = useHydrationStats();
 
   if (stats.totalDays < 2) return null;
 
+  const streakValue = stats.streak > 0
+    ? (stats.streak === 1 ? t('stats.day', { count: stats.streak }) : t('stats.days', { count: stats.streak }))
+    : '—';
+
   return (
     <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
-      <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Statistics</h2>
+      <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">{t('stats.title')}</h2>
       <div className="grid grid-cols-3 gap-3">
-        <StatItem label="Daily avg" value={`${stats.averageMl.toLocaleString()} ml`} />
-        <StatItem label="Best day" value={`${stats.bestDayMl.toLocaleString()} ml`} />
-        <StatItem
-          label="Streak"
-          value={stats.streak > 0 ? `${stats.streak} day${stats.streak === 1 ? '' : 's'}` : '—'}
-        />
+        <StatItem label={t('stats.dailyAvg')} value={`${stats.averageMl.toLocaleString()} ml`} />
+        <StatItem label={t('stats.bestDay')} value={`${stats.bestDayMl.toLocaleString()} ml`} />
+        <StatItem label={t('stats.streak')} value={streakValue} />
       </div>
     </div>
   );

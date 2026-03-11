@@ -1,7 +1,9 @@
+import { useTranslation } from 'react-i18next';
 import { useHydrationStore } from '../store/useHydrationStore';
 import { getRecentDateKeys, getDateLabel } from '../utils/date';
 
 export function HydrationHistory() {
+  const { t } = useTranslation();
   const records = useHydrationStore((s) => s.records);
   const goalMl = useHydrationStore((s) => s.goalMl);
 
@@ -22,7 +24,7 @@ export function HydrationHistory() {
 
   return (
     <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
-      <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">History</h2>
+      <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">{t('history.title')}</h2>
       <div className="space-y-2">
         {history.map(({ dateKey, total }) => {
           const percentage = goalMl > 0 ? Math.round((total / goalMl) * 100) : 0;
@@ -36,13 +38,7 @@ export function HydrationHistory() {
               </span>
               <div className="flex-1">
                 <div className="h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
-                  <div
-                    className="h-2 rounded-full transition-all duration-500"
-                    style={{
-                      width: `${barWidth}%`,
-                      backgroundColor: reached ? '#22c55e' : '#3b82f6',
-                    }}
-                  />
+                  <div className="h-2 rounded-full transition-all duration-500" style={{ width: `${barWidth}%`, backgroundColor: reached ? '#22c55e' : '#3b82f6' }} />
                 </div>
               </div>
               <span className={`w-16 text-right text-xs font-medium ${reached ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>

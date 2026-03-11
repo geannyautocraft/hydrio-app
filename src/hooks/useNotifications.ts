@@ -1,30 +1,34 @@
 import { useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useHydrationStore, useTodayRecord } from '../store/useHydrationStore';
 
-const MESSAGES = [
-  'Time to hydrate 💧',
-  'A small sip keeps you on track.',
-  'Stay hydrated! Drink some water.',
-  'Your body needs water — take a sip!',
-  'Hydration check! Have you had water recently?',
+const MESSAGE_KEYS = [
+  'notifications.timeToHydrate',
+  'notifications.smallSip',
+  'notifications.stayHydrated',
+  'notifications.bodyNeeds',
+  'notifications.hydrationCheck',
 ];
 
-const GENTLE_MESSAGES = [
-  "You're doing well! A sip won't hurt though 💧",
-  'Keep the momentum going!',
-  'Stay consistent — have some water.',
+const GENTLE_MESSAGE_KEYS = [
+  'notifications.doingWell',
+  'notifications.keepMomentum',
+  'notifications.stayConsistent',
 ];
 
-function getRandomMessage(messages: string[]) {
-  return messages[Math.floor(Math.random() * messages.length)];
+function getRandomKey(keys: string[]) {
+  return keys[Math.floor(Math.random() * keys.length)];
 }
 
 export function useNotifications() {
+  const { t } = useTranslation();
   const { enabled, intervalMinutes } = useHydrationStore((s) => s.notifications);
   const setNotifications = useHydrationStore((s) => s.setNotifications);
   const goalMl = useHydrationStore((s) => s.goalMl);
   const todayRecord = useTodayRecord();
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const tRef = useRef(t);
+  tRef.current = t;
 
   const clearTimer = useCallback(() => {
     if (intervalRef.current) {
@@ -86,10 +90,10 @@ export function useNotifications() {
       }
 
       // Choose message based on progress
-      const messages = percentage >= 60 ? GENTLE_MESSAGES : MESSAGES;
+      const keys = percentage >= 60 ? GENTLE_MESSAGE_KEYS : MESSAGE_KEYS;
 
       new Notification('Hydrio', {
-        body: getRandomMessage(messages),
+        body: tRef.current(getRandomKey(keys)),
         icon: '/icon-192.png',
         badge: '/icon-192.png',
       });
