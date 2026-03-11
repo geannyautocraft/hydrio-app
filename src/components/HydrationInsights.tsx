@@ -13,12 +13,19 @@ const TYPE_ICONS = {
 } as const;
 
 export function HydrationInsights() {
-  const insight = useHydrationInsights();
+  const insights = useHydrationInsights();
 
   return (
-    <div className={`flex items-center gap-2.5 rounded-xl border px-4 py-3 ${TYPE_STYLES[insight.type]}`}>
-      <span className="text-base leading-none">{TYPE_ICONS[insight.type]}</span>
-      <p className="text-sm font-medium">{insight.message}</p>
+    <div className="space-y-2">
+      {insights.map((insight, i) => (
+        <div
+          key={i}
+          className={`flex items-center gap-2.5 rounded-xl border px-4 py-3 ${TYPE_STYLES[insight.type]}`}
+        >
+          <span className="text-base leading-none">{TYPE_ICONS[insight.type]}</span>
+          <p className="text-sm font-medium">{insight.message}</p>
+        </div>
+      ))}
     </div>
   );
 }

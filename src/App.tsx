@@ -3,6 +3,8 @@ import { Header } from './components/Header';
 import { GoalEditor } from './components/GoalEditor';
 import { HydrationProgress } from './components/HydrationProgress';
 import { HydrationInsights } from './components/HydrationInsights';
+import { HydrationStatusCard } from './components/HydrationStatusCard';
+import { InsightsPanel } from './components/InsightsPanel';
 import { QuickAddButtons } from './components/QuickAddButtons';
 import { CustomWaterInput } from './components/CustomWaterInput';
 import { DailyLogList } from './components/DailyLogList';
@@ -11,6 +13,7 @@ import { HydrationStats } from './components/HydrationStats';
 import { WeeklyChart } from './components/WeeklyChart';
 import { Onboarding } from './components/Onboarding';
 import { useMidnightReset } from './hooks/useMidnightReset';
+import { useNotifications } from './hooks/useNotifications';
 import { useThemeStore } from './store/useThemeStore';
 
 const ONBOARDING_KEY = 'hydrio-onboarding-complete';
@@ -22,6 +25,7 @@ export default function App() {
   );
 
   useMidnightReset();
+  useNotifications();
 
   // Initialize dark mode class on mount
   useEffect(() => {
@@ -54,6 +58,7 @@ export default function App() {
       <HydrationProgress />
 
       <div className="mt-2 space-y-3">
+        <HydrationStatusCard />
         <HydrationInsights />
         <QuickAddButtons />
         <CustomWaterInput />
@@ -63,6 +68,7 @@ export default function App() {
         <DailyLogList />
         <WeeklyChart />
         <HydrationHistory />
+        <InsightsPanel />
         <HydrationStats />
       </div>
     </div>

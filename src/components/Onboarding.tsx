@@ -1,24 +1,50 @@
 import { useState } from 'react';
 import { useHydrationStore } from '../store/useHydrationStore';
-import { MIN_GOAL_ML, MAX_GOAL_ML, DEFAULT_GOAL_ML } from '../types';
+import {
+  MIN_GOAL_ML,
+  MAX_GOAL_ML,
+  DEFAULT_GOAL_ML,
+  MIN_WEIGHT_KG,
+  MAX_WEIGHT_KG,
+  WEIGHT_TO_ML_FACTOR,
+} from '../types';
 
 interface OnboardingProps {
   onComplete: () => void;
 }
 
-const STEPS = ['welcome', 'goal', 'quickadd', 'ready'] as const;
+const STEPS = ['welcome', 'weight', 'goal', 'quickadd', 'ready'] as const;
 
 export function Onboarding({ onComplete }: OnboardingProps) {
   const [step, setStep] = useState(0);
+  const [weightInput, setWeightInput] = useState('');
   const [goalInput, setGoalInput] = useState(String(DEFAULT_GOAL_ML));
+  const [useCustomGoal, setUseCustomGoal] = useState(false);
   const setGoal = useHydrationStore((s) => s.setGoal);
+  const setWeight = useHydrationStore((s) => s.setWeight);
+  const setCustomGoal = useHydrationStore((s) => s.setCustomGoal);
 
   const current = STEPS[step];
 
+  const weightKg = parseFloat(weightInput);
+  const hasValidWeight = !isNaN(weightKg) && weightKg >= MIN_WEIGHT_KG && weightKg <= MAX_WEIGHT_KG;
+  const recommendedGoal = hasValidWeight ? Math.round(weightKg * WEIGHT_TO_ML_FACTOR) : DEFAULT_GOAL_ML;
+
   const next = () => {
-    if (step === 1) {
+    if (current === 'weight') {
+      if (hasValidWeight) {
+        setWeight(weightKg);
+        if (!useCustomGoal) {
+          setGoalInput(String(recommendedGoal));
+        }
+      }
+    }
+    if (current === 'goal') {
       const goal = parseInt(goalInput, 10);
       if (!isNaN(goal) && goal >= MIN_GOAL_ML && goal <= MAX_GOAL_ML) {
+        if (useCustomGoal || !hasValidWeight) {
+          setCustomGoal(goal);
+        }
         setGoal(goal);
       }
     }
@@ -58,38 +84,106 @@ export function Onboarding({ onComplete }: OnboardingProps) {
           </div>
         )}
 
+        {current === 'weight' && (
+          <div className="text-center">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white">Your Body Weight</h2>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              We'll use this to calculate your recommended daily water intake.
+            </p>
+            <div className="mt-6 flex items-center justify-center gap-2">
+              <input
+                type="number"
+                value={weightInput}
+                onChange={(e) => setWeightInput(e.target.value)}
+                placeholder="70"
+                min={MIN_WEIGHT_KG}
+                max={MAX_WEIGHT_KG}
+                className="w-28 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-2 text-center text-lg font-semibold text-gray-800 dark:text-white focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900"
+              />
+              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">kg</span>
+            </div>
+            {hasValidWeight && (
+              <div className="mt-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 px-4 py-3">
+                <p className="text-sm text-blue-700 dark:text-blue-300">
+                  Recommended intake: <span className="font-semibold">{recommendedGoal} ml/day</span>
+                </p>
+                <p className="mt-1 text-xs text-blue-500 dark:text-blue-400">
+                  Based on {weightKg} kg x {WEIGHT_TO_ML_FACTOR} ml/kg
+                </p>
+              </div>
+            )}
+            <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">
+              Optional — you can skip and set a goal manually.
+            </p>
+          </div>
+        )}
+
         {current === 'goal' && (
           <div className="text-center">
             <h2 className="text-xl font-bold text-gray-800 dark:text-white">Set Your Daily Goal</h2>
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
               How much water do you want to drink each day?
             </p>
-            <div className="mt-6 flex items-center justify-center gap-2">
+
+            {hasValidWeight && (
+              <div className="mt-4 flex justify-center gap-2">
+                <button
+                  onClick={() => {
+                    setUseCustomGoal(false);
+                    setGoalInput(String(recommendedGoal));
+                  }}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    !useCustomGoal
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  Recommended ({recommendedGoal} ml)
+                </button>
+                <button
+                  onClick={() => setUseCustomGoal(true)}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    useCustomGoal
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  Custom
+                </button>
+              </div>
+            )}
+
+            <div className="mt-4 flex items-center justify-center gap-2">
               <input
                 type="number"
                 value={goalInput}
-                onChange={(e) => setGoalInput(e.target.value)}
+                onChange={(e) => {
+                  setGoalInput(e.target.value);
+                  if (hasValidWeight) setUseCustomGoal(true);
+                }}
                 min={MIN_GOAL_ML}
                 max={MAX_GOAL_ML}
                 className="w-28 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-2 text-center text-lg font-semibold text-gray-800 dark:text-white focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900"
               />
               <span className="text-sm font-medium text-gray-500 dark:text-gray-400">ml / day</span>
             </div>
-            <div className="mt-4 flex justify-center gap-2">
-              {[1500, 2000, 2500, 3000].map((preset) => (
-                <button
-                  key={preset}
-                  onClick={() => setGoalInput(String(preset))}
-                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                    goalInput === String(preset)
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                  }`}
-                >
-                  {preset} ml
-                </button>
-              ))}
-            </div>
+            {(!hasValidWeight || useCustomGoal) && (
+              <div className="mt-4 flex justify-center gap-2">
+                {[1500, 2000, 2500, 3000].map((preset) => (
+                  <button
+                    key={preset}
+                    onClick={() => setGoalInput(String(preset))}
+                    className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                      goalInput === String(preset)
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    {preset} ml
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -128,6 +222,11 @@ export function Onboarding({ onComplete }: OnboardingProps) {
               Start tracking your hydration and stay healthy. Your goal is{' '}
               <span className="font-semibold text-blue-600 dark:text-blue-400">{goalInput} ml</span> per day.
             </p>
+            {hasValidWeight && (
+              <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+                Based on your weight of {weightKg} kg
+              </p>
+            )}
           </div>
         )}
 
@@ -135,7 +234,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
           onClick={next}
           className="mt-6 w-full rounded-xl bg-blue-500 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-600 active:bg-blue-700"
         >
-          {current === 'ready' ? 'Start Tracking' : 'Continue'}
+          {current === 'ready' ? 'Start Tracking' : current === 'weight' && !weightInput ? 'Skip' : 'Continue'}
         </button>
 
         {step > 0 && current !== 'ready' && (

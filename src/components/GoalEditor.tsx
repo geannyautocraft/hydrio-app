@@ -1,25 +1,51 @@
 import { useState } from 'react';
 import { useHydrationStore } from '../store/useHydrationStore';
-import { MIN_GOAL_ML, MAX_GOAL_ML, MAX_SINGLE_ENTRY_ML } from '../types';
+import { useNotifications } from '../hooks/useNotifications';
+import {
+  MIN_GOAL_ML,
+  MAX_GOAL_ML,
+  MAX_SINGLE_ENTRY_ML,
+  MIN_WEIGHT_KG,
+  MAX_WEIGHT_KG,
+  WEIGHT_TO_ML_FACTOR,
+} from '../types';
 
 interface GoalEditorProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+const INTERVAL_OPTIONS = [
+  { label: '30 min', value: 30 },
+  { label: '1 hr', value: 60 },
+  { label: '2 hr', value: 120 },
+  { label: '3 hr', value: 180 },
+];
+
 export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
   const goalMl = useHydrationStore((s) => s.goalMl);
   const setGoal = useHydrationStore((s) => s.setGoal);
   const quickPresets = useHydrationStore((s) => s.quickPresets);
   const setQuickPresets = useHydrationStore((s) => s.setQuickPresets);
+  const userProfile = useHydrationStore((s) => s.userProfile);
+  const setWeight = useHydrationStore((s) => s.setWeight);
+  const setCustomGoal = useHydrationStore((s) => s.setCustomGoal);
 
-  const [goalValue, setGoalValue] = useState(String(goalMl));
-  const [presetValues, setPresetValues] = useState(
-    quickPresets.map(String)
+  const notifications = useNotifications();
+
+  const [weightValue, setWeightValue] = useState(
+    userProfile.weightKg ? String(userProfile.weightKg) : ''
   );
+  const [goalValue, setGoalValue] = useState(String(goalMl));
+  const [useRecommended, setUseRecommended] = useState(!userProfile.customGoal);
+  const [presetValues, setPresetValues] = useState(quickPresets.map(String));
   const [error, setError] = useState('');
 
   if (!isOpen) return null;
+
+  const parsedWeight = parseFloat(weightValue);
+  const hasValidWeight = !isNaN(parsedWeight) && parsedWeight >= MIN_WEIGHT_KG && parsedWeight <= MAX_WEIGHT_KG;
+  const recommendedGoal = hasValidWeight ? Math.round(parsedWeight * WEIGHT_TO_ML_FACTOR) : null;
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +66,22 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
       return;
     }
 
-    setGoal(parsedGoal);
+    // Save weight
+    if (hasValidWeight) {
+      setWeight(parsedWeight);
+    } else if (!weightValue) {
+      setWeight(null);
+    }
+
+    // Save goal
+    if (useRecommended && hasValidWeight) {
+      setCustomGoal(null);
+      setGoal(recommendedGoal!);
+    } else {
+      setCustomGoal(parsedGoal);
+      setGoal(parsedGoal);
+    }
+
     setQuickPresets(parsedPresets);
     onClose();
   };
@@ -64,10 +105,70 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
   return (
     <div className="rounded-xl bg-white p-5 shadow-sm dark:bg-gray-800">
       <form onSubmit={handleSave} className="space-y-4">
+        {/* Weight Input */}
+        <div>
+          <label htmlFor="weight-input" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Body Weight (kg)
+          </label>
+          <input
+            id="weight-input"
+            type="number"
+            min={MIN_WEIGHT_KG}
+            max={MAX_WEIGHT_KG}
+            step={0.5}
+            value={weightValue}
+            onChange={(e) => {
+              setWeightValue(e.target.value);
+              setError('');
+              const w = parseFloat(e.target.value);
+              if (!isNaN(w) && w >= MIN_WEIGHT_KG && w <= MAX_WEIGHT_KG && useRecommended) {
+                setGoalValue(String(Math.round(w * WEIGHT_TO_ML_FACTOR)));
+              }
+            }}
+            placeholder="e.g. 70"
+            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm transition-colors focus:border-blue-400 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500"
+          />
+          {hasValidWeight && (
+            <p className="mt-1 text-xs text-blue-500 dark:text-blue-400">
+              Recommended: {recommendedGoal} ml/day ({parsedWeight} kg x {WEIGHT_TO_ML_FACTOR} ml)
+            </p>
+          )}
+        </div>
+
+        {/* Goal Input */}
         <div>
           <label htmlFor="goal-input" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
             Daily Goal (ml)
           </label>
+          {hasValidWeight && (
+            <div className="mb-2 flex gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setUseRecommended(true);
+                  setGoalValue(String(recommendedGoal));
+                }}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  useRecommended
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+                }`}
+              >
+                Recommended
+              </button>
+              <button
+                type="button"
+                onClick={() => setUseRecommended(false)}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  !useRecommended
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+                }`}
+              >
+                Custom
+              </button>
+            </div>
+          )}
           <input
             id="goal-input"
             type="number"
@@ -75,11 +176,16 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
             max={MAX_GOAL_ML}
             step={50}
             value={goalValue}
-            onChange={(e) => { setGoalValue(e.target.value); setError(''); }}
+            onChange={(e) => {
+              setGoalValue(e.target.value);
+              setUseRecommended(false);
+              setError('');
+            }}
             className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm transition-colors focus:border-blue-400 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500"
           />
         </div>
 
+        {/* Quick Presets */}
         <div>
           <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
             Quick Add Presets (ml)
@@ -118,6 +224,65 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
               + Add preset
             </button>
           )}
+        </div>
+
+        {/* Notification Settings */}
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Hydration Reminders
+          </label>
+          <div className="rounded-lg border border-gray-200 dark:border-gray-600 p-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  {notifications.enabled ? 'Reminders on' : 'Reminders off'}
+                </p>
+                {!notifications.supported && (
+                  <p className="text-xs text-gray-400">Not supported in this browser</p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={async () => {
+                  if (notifications.enabled) {
+                    notifications.disable();
+                  } else {
+                    await notifications.enable();
+                  }
+                }}
+                disabled={!notifications.supported}
+                className={`relative h-6 w-11 rounded-full transition-colors ${
+                  notifications.enabled
+                    ? 'bg-blue-500'
+                    : 'bg-gray-300 dark:bg-gray-600'
+                } ${!notifications.supported ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+              >
+                <span
+                  className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform shadow-sm ${
+                    notifications.enabled ? 'translate-x-5' : ''
+                  }`}
+                />
+              </button>
+            </div>
+            {notifications.enabled && (
+              <div className="mt-3 flex gap-1.5">
+                {INTERVAL_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => notifications.setInterval(opt.value)}
+                    className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                      notifications.intervalMinutes === opt.value
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {error && (

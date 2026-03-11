@@ -1,10 +1,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { DayRecord, WaterEntry } from '../types';
+import type { DayRecord, WaterEntry, UserProfile, NotificationSettings } from '../types';
 import {
   MAX_SINGLE_ENTRY_ML,
   DEFAULT_GOAL_ML,
   DEFAULT_PRESETS,
+  WEIGHT_TO_ML_FACTOR,
+  DEFAULT_REMINDER_INTERVAL,
 } from '../types';
 import { getTodayKey } from '../utils/date';
 
@@ -20,6 +22,8 @@ interface HydrationState {
   goalMl: number;
   records: Record<string, DayRecord>;
   quickPresets: number[];
+  userProfile: UserProfile;
+  notifications: NotificationSettings;
 }
 
 interface HydrationActions {
@@ -28,6 +32,9 @@ interface HydrationActions {
   editEntry: (entryId: string, newAmount: number) => void;
   setGoal: (goalMl: number) => void;
   setQuickPresets: (presets: number[]) => void;
+  setWeight: (weightKg: number | null) => void;
+  setCustomGoal: (goalMl: number | null) => void;
+  setNotifications: (settings: Partial<NotificationSettings>) => void;
 }
 
 export const useHydrationStore = create<HydrationState & HydrationActions>()(
@@ -36,6 +43,15 @@ export const useHydrationStore = create<HydrationState & HydrationActions>()(
       goalMl: DEFAULT_GOAL_ML,
       records: {},
       quickPresets: DEFAULT_PRESETS,
+      userProfile: {
+        weightKg: null,
+        recommendedGoal: DEFAULT_GOAL_ML,
+        customGoal: null,
+      },
+      notifications: {
+        enabled: false,
+        intervalMinutes: DEFAULT_REMINDER_INTERVAL,
+      },
 
       addEntry: (amount: number) => {
         if (amount <= 0 || amount > MAX_SINGLE_ENTRY_ML) return;
@@ -112,10 +128,58 @@ export const useHydrationStore = create<HydrationState & HydrationActions>()(
       setGoal: (goalMl: number) => set({ goalMl }),
 
       setQuickPresets: (presets: number[]) => set({ quickPresets: presets }),
+
+      setWeight: (weightKg: number | null) =>
+        set((state) => {
+          const recommendedGoal = weightKg
+            ? Math.round(weightKg * WEIGHT_TO_ML_FACTOR)
+            : DEFAULT_GOAL_ML;
+          const newGoal = state.userProfile.customGoal ?? recommendedGoal;
+          return {
+            userProfile: {
+              ...state.userProfile,
+              weightKg,
+              recommendedGoal,
+            },
+            goalMl: newGoal,
+          };
+        }),
+
+      setCustomGoal: (goalMl: number | null) =>
+        set((state) => ({
+          userProfile: {
+            ...state.userProfile,
+            customGoal: goalMl,
+          },
+          goalMl: goalMl ?? state.userProfile.recommendedGoal,
+        })),
+
+      setNotifications: (settings: Partial<NotificationSettings>) =>
+        set((state) => ({
+          notifications: { ...state.notifications, ...settings },
+        })),
     }),
     {
       name: 'hydrio-storage',
-      version: 1,
+      version: 2,
+      migrate: (persisted: unknown, version: number) => {
+        const state = persisted as HydrationState;
+        if (version < 2) {
+          return {
+            ...state,
+            userProfile: state.userProfile ?? {
+              weightKg: null,
+              recommendedGoal: state.goalMl ?? DEFAULT_GOAL_ML,
+              customGoal: null,
+            },
+            notifications: state.notifications ?? {
+              enabled: false,
+              intervalMinutes: DEFAULT_REMINDER_INTERVAL,
+            },
+          };
+        }
+        return state;
+      },
     }
   )
 );
