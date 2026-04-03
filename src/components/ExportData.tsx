@@ -13,15 +13,19 @@ function ExportDataContent() {
   const totalDays = Object.keys(records).length;
   const totalEntries = Object.values(records).reduce((sum, r) => sum + r.entries.length, 0);
 
-  const handleExport = (format: 'json' | 'csv') => {
-    if (format === 'json') exportAsJSON(records, goalMl);
-    else exportAsCSV(records, goalMl);
-    setExported(format.toUpperCase());
-    setTimeout(() => setExported(null), 2000);
+  const handleExport = async (format: 'json' | 'csv') => {
+    try {
+      if (format === 'json') await exportAsJSON(records, goalMl);
+      else await exportAsCSV(records, goalMl);
+      setExported(format.toUpperCase());
+      setTimeout(() => setExported(null), 2000);
+    } catch {
+      // Share cancelled by user — ignore
+    }
   };
 
   return (
-    <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+    <div className="rounded-2xl glass p-4 shadow-lg shadow-blue-900/5">
       <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">{t('export.title')}</h2>
       <p className="mb-3 text-xs text-gray-500 dark:text-gray-400">
         {t('export.summary', { days: totalDays, entries: totalEntries })}

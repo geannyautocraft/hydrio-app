@@ -240,7 +240,7 @@ export function GoalEditor({ isOpen, onClose }: GoalEditorProps) {
                   {notifications.enabled ? t('settings.remindersOn') : t('settings.remindersOff')}
                 </p>
                 {!notifications.supported && (
-                  <p className="text-xs text-gray-400">{t('settings.notSupported')}</p>
+                  <p className="text-xs text-gray-500">{t('settings.notSupported')}</p>
                 )}
               </div>
               <button

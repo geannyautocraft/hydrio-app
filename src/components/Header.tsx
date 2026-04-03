@@ -27,13 +27,13 @@ export function Header({ onToggleSettings, settingsOpen }: HeaderProps) {
           <h1 className="text-2xl font-bold text-blue-600">Hydrio</h1>
           <PremiumBadge />
         </div>
-        <p className="text-sm text-gray-400">{subtitle}</p>
+        <p className="text-sm text-gray-500">{subtitle}</p>
       </div>
       <div className="flex items-center gap-1">
         <DarkModeToggle />
         <button
           onClick={onToggleSettings}
-          className={`rounded-lg p-2 transition-colors ${
+          className={`rounded-lg p-2.5 transition-colors ${
             settingsOpen
               ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
               : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300'

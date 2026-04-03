@@ -50,21 +50,21 @@ export function HydrationHeatmap() {
   }, [records, goalMl]);
 
   return (
-    <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+    <div className="rounded-2xl glass p-4 shadow-lg shadow-blue-900/5">
       <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">{t('heatmap.title')}</h3>
-      <div className="grid grid-cols-10 gap-1">
+      <div className="grid grid-cols-6 gap-1 min-[360px]:grid-cols-7 min-[400px]:grid-cols-10">
         {days.map((day) => (
-          <div key={day.dateKey} title={`${day.dateKey}: ${day.percentage}%`} className={`flex h-7 items-center justify-center rounded text-[10px] font-medium transition-colors ${LEVEL_COLORS.light[day.level]} ${LEVEL_COLORS.dark[day.level]} ${day.level >= 3 ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+          <div key={day.dateKey} title={`${day.dateKey}: ${day.percentage}%`} className={`flex aspect-square min-h-[28px] items-center justify-center rounded text-[10px] font-medium transition-colors ${LEVEL_COLORS.light[day.level]} ${LEVEL_COLORS.dark[day.level]} ${day.level >= 3 ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`}>
             {day.dayOfMonth}
           </div>
         ))}
       </div>
       <div className="mt-3 flex items-center justify-end gap-1.5">
-        <span className="text-[10px] text-gray-400">{t('heatmap.less')}</span>
+        <span className="text-[10px] text-gray-500">{t('heatmap.less')}</span>
         {[0, 1, 2, 3, 4].map((level) => (
           <div key={level} className={`h-3 w-3 rounded-sm ${LEVEL_COLORS.light[level]} ${LEVEL_COLORS.dark[level]}`} />
         ))}
-        <span className="text-[10px] text-gray-400">{t('heatmap.more')}</span>
+        <span className="text-[10px] text-gray-500">{t('heatmap.more')}</span>
       </div>
     </div>
   );

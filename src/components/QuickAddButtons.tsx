@@ -23,7 +23,7 @@ export function QuickAddButtons() {
         <button
           key={amount}
           onClick={() => handleAdd(amount)}
-          className="flex-1 rounded-xl bg-blue-500 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-600 hover:shadow-md active:scale-95 active:shadow-sm dark:bg-blue-600 dark:hover:bg-blue-500"
+          className="flex-1 rounded-xl bg-blue-500/80 backdrop-blur-sm py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:bg-blue-500 hover:shadow-xl active:scale-95 dark:bg-blue-600/80 dark:hover:bg-blue-500"
         >
           +{amount} {t('onboarding.ml')}
         </button>

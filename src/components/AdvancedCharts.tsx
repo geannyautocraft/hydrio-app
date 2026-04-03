@@ -59,7 +59,7 @@ function AdvancedChartsContent() {
   ];
 
   return (
-    <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+    <div className="rounded-2xl glass p-4 shadow-lg shadow-blue-900/5">
       <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">{t('advancedCharts.title')}</h2>
 
       <div className="mb-3 flex gap-1.5">

@@ -23,7 +23,7 @@ export function HydrationHistory() {
   }
 
   return (
-    <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+    <div className="rounded-2xl glass p-4 shadow-lg shadow-blue-900/5">
       <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">{t('history.title')}</h2>
       <div className="space-y-2">
         {history.map(({ dateKey, total }) => {
@@ -44,7 +44,7 @@ export function HydrationHistory() {
               <span className={`w-16 text-right text-xs font-medium ${reached ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
                 {total > 0 ? `${total} ml` : '—'}
               </span>
-              <span className={`w-10 text-right text-xs ${reached ? 'text-green-600 dark:text-green-400' : 'text-gray-400'}`}>
+              <span className={`w-10 text-right text-xs ${reached ? 'text-green-600 dark:text-green-400' : 'text-gray-500'}`}>
                 {total > 0 ? `${percentage}%` : ''}
               </span>
             </div>

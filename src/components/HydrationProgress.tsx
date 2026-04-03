@@ -61,7 +61,7 @@ export function HydrationProgress() {
           <span className="text-3xl font-bold tracking-tight text-gray-800 dark:text-white">
             {currentMl.toLocaleString()}
           </span>
-          <span className="text-xs text-gray-400">{t('progress.of', { goal: goalMl.toLocaleString() })}</span>
+          <span className="text-xs text-gray-500">{t('progress.of', { goal: goalMl.toLocaleString() })}</span>
           <span className="mt-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold text-white" style={{ backgroundColor: color }}>
             {Math.round(rawPercentage)}%
           </span>
@@ -74,7 +74,7 @@ export function HydrationProgress() {
           <div className="h-1 rounded-full" style={{ width: '60px', backgroundColor: trackColor }}>
             <div className="h-1 rounded-full transition-all duration-700 ease-out" style={{ width: `${displayPercentage}%`, backgroundColor: color }} />
           </div>
-          <span className="text-xs text-gray-400">{t('progress.mlLeft', { remaining })}</span>
+          <span className="text-xs text-gray-500">{t('progress.mlLeft', { remaining })}</span>
         </div>
       )}
     </div>

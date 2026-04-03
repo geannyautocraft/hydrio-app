@@ -21,11 +21,11 @@ export function WeeklyChallenge() {
   const dots = Array.from({ length: totalDays }, (_, i) => i < daysCompleted);
 
   return (
-    <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+    <div className="rounded-2xl glass p-4 shadow-lg shadow-blue-900/5">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-sm font-semibold text-gray-600 dark:text-gray-300">{t('retention.weeklyChallenge')}</h2>
-          <p className="mt-0.5 text-xs text-gray-400">
+          <p className="mt-0.5 text-xs text-gray-500">
             {daysCompleted === totalDays
               ? t('retention.perfectWeek')
               : t('retention.completedGoal', { completed: daysCompleted, total: totalDays })}
@@ -69,15 +69,15 @@ export function EndOfDaySummary() {
       <div className="mt-2 grid grid-cols-3 gap-2">
         <div className="text-center">
           <p className="text-lg font-bold text-gray-800 dark:text-white">{totalMl.toLocaleString()}</p>
-          <p className="text-[10px] text-gray-400">{t('retention.mlTotal')}</p>
+          <p className="text-[10px] text-gray-500">{t('retention.mlTotal')}</p>
         </div>
         <div className="text-center">
           <p className="text-lg font-bold text-gray-800 dark:text-white">{entryCount}</p>
-          <p className="text-[10px] text-gray-400">{t('retention.entries')}</p>
+          <p className="text-[10px] text-gray-500">{t('retention.entries')}</p>
         </div>
         <div className="text-center">
           <p className={`text-lg font-bold ${reached ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400'}`}>{percentage}%</p>
-          <p className="text-[10px] text-gray-400">{t('retention.ofGoal')}</p>
+          <p className="text-[10px] text-gray-500">{t('retention.ofGoal')}</p>
         </div>
       </div>
       {!reached && (

@@ -20,11 +20,11 @@ export function PremiumGate({ feature, children }: PremiumGateProps) {
 
   return (
     <>
-      <div className="relative rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+      <div className="relative rounded-2xl glass p-4 shadow-lg shadow-blue-900/5">
         <div className="pointer-events-none select-none opacity-30 blur-[2px]">
           <div className="h-24" />
         </div>
-        <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-white/80 dark:bg-gray-800/80">
+        <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl glass-strong">
           <span className="mb-1 text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">
             {t('premium.label')}
           </span>

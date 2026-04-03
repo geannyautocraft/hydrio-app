@@ -1,3 +1,6 @@
+import { Capacitor } from '@capacitor/core';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 import type { DayRecord } from '../types';
 
 interface ExportData {
@@ -36,19 +39,19 @@ function buildExportData(
   };
 }
 
-export function exportAsJSON(
+export async function exportAsJSON(
   records: Record<string, DayRecord>,
   goalMl: number
-): void {
+): Promise<void> {
   const data = buildExportData(records, goalMl);
   const json = JSON.stringify(data, null, 2);
-  downloadFile(json, 'hydrio-data.json', 'application/json');
+  await shareOrDownload(json, 'hydrio-data.json', 'application/json');
 }
 
-export function exportAsCSV(
+export async function exportAsCSV(
   records: Record<string, DayRecord>,
   goalMl: number
-): void {
+): Promise<void> {
   const data = buildExportData(records, goalMl);
   const lines: string[] = [
     'Date,Total (ml),Goal (ml),Goal Reached,Entries',
@@ -63,17 +66,33 @@ export function exportAsCSV(
     );
   }
 
-  downloadFile(lines.join('\n'), 'hydrio-data.csv', 'text/csv');
+  await shareOrDownload(lines.join('\n'), 'hydrio-data.csv', 'text/csv');
 }
 
-function downloadFile(content: string, filename: string, type: string): void {
-  const blob = new Blob([content], { type });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+async function shareOrDownload(content: string, filename: string, type: string): Promise<void> {
+  if (Capacitor.isNativePlatform()) {
+    // Native: save to cache dir and share via Android share sheet
+    const result = await Filesystem.writeFile({
+      path: filename,
+      data: content,
+      directory: Directory.Cache,
+      encoding: Encoding.UTF8,
+    });
+
+    await Share.share({
+      title: filename,
+      url: result.uri,
+    });
+  } else {
+    // Browser: standard download
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
 }

@@ -84,7 +84,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
                 <p className="mt-1 text-xs text-blue-500 dark:text-blue-400">{t('onboarding.basedOn', { weight: weightKg, factor: WEIGHT_TO_ML_FACTOR })}</p>
               </div>
             )}
-            <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">{t('onboarding.optional')}</p>
+            <p className="mt-3 text-xs text-gray-500 dark:text-gray-500">{t('onboarding.optional')}</p>
           </div>
         )}
 
@@ -96,7 +96,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
               {ACTIVITY_LEVELS.map((level) => (
                 <button key={level} onClick={() => setActivityInput(level)} className={`w-full rounded-xl px-4 py-3 text-left transition-colors ${activityInput === level ? 'bg-blue-50 border-2 border-blue-500 dark:bg-blue-900/20 dark:border-blue-400' : 'bg-gray-50 border-2 border-transparent dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'}`}>
                   <p className={`text-sm font-semibold ${activityInput === level ? 'text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300'}`}>{t(`activity.${level}`)}</p>
-                  <p className="text-xs text-gray-400 dark:text-gray-500">{t(`activity.${level}Desc`)}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500">{t(`activity.${level}Desc`)}</p>
                 </button>
               ))}
             </div>
@@ -146,11 +146,11 @@ export function Onboarding({ onComplete }: OnboardingProps) {
               {[100, 250, 500].map((amount) => (
                 <div key={amount} className="rounded-xl bg-blue-50 dark:bg-blue-900/20 px-4 py-3 text-center">
                   <p className="text-lg font-bold text-blue-600 dark:text-blue-400">+{amount}</p>
-                  <p className="text-xs text-gray-400">{t('onboarding.ml')}</p>
+                  <p className="text-xs text-gray-500">{t('onboarding.ml')}</p>
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-xs text-gray-400 dark:text-gray-500">{t('onboarding.customizeLater')}</p>
+            <p className="mt-4 text-xs text-gray-500 dark:text-gray-500">{t('onboarding.customizeLater')}</p>
           </div>
         )}
 
@@ -167,7 +167,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
               <span className="font-semibold text-blue-600 dark:text-blue-400">{t('onboarding.readyGoal', { amount: goalInput })}</span> {t('onboarding.perDay')}
             </p>
             {hasValidWeight && (
-              <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-500">
                 {t('onboarding.basedOnWeight', { weight: weightKg, activity: t(`activity.${activityInput}`).toLowerCase() })}
               </p>
             )}
@@ -179,7 +179,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
         </button>
 
         {step > 0 && current !== 'ready' && (
-          <button onClick={() => setStep(step - 1)} className="mt-2 w-full py-2 text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+          <button onClick={() => setStep(step - 1)} className="mt-2 w-full py-2 text-sm text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
             {t('onboarding.back')}
           </button>
         )}

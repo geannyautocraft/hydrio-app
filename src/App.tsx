@@ -23,6 +23,7 @@ import { InstallPrompt } from './components/InstallPrompt';
 import { WeeklyChallenge, EndOfDaySummary, ConsistencyMessage } from './components/RetentionCards';
 import { useMidnightReset } from './hooks/useMidnightReset';
 import { useNotifications } from './hooks/useNotifications';
+import { useBilling } from './hooks/useBilling';
 import { useThemeStore } from './store/useThemeStore';
 
 const ONBOARDING_KEY = 'hydrio-onboarding-complete';
@@ -35,6 +36,7 @@ export default function App() {
 
   useMidnightReset();
   useNotifications();
+  useBilling(); // Auto-restore purchases on startup
 
   // Initialize dark mode class on mount
   useEffect(() => {

@@ -24,12 +24,12 @@ export function HydrationStatusCard() {
   const message = t(getMotivationalKey(percentage, currentMl));
 
   return (
-    <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+    <div className="rounded-2xl glass p-4 shadow-lg shadow-blue-900/5">
       <p className={`mb-3 text-xs font-medium ${
         isComplete
           ? 'text-green-600 dark:text-green-400'
           : currentMl === 0
-            ? 'text-gray-400'
+            ? 'text-gray-500'
             : 'text-blue-600 dark:text-blue-400'
       }`}>
         {message}
@@ -39,7 +39,7 @@ export function HydrationStatusCard() {
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <span className="text-2xl font-bold text-gray-800 dark:text-white">{currentMl.toLocaleString()}</span>
-            <span className="text-sm text-gray-400">/ {goalMl.toLocaleString()} ml</span>
+            <span className="text-sm text-gray-500">/ {goalMl.toLocaleString()} ml</span>
           </div>
 
           <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
@@ -49,7 +49,7 @@ export function HydrationStatusCard() {
           <div className="mt-2 flex items-center justify-between">
             <span className={`text-xs font-semibold ${isComplete ? 'text-green-500' : 'text-blue-500'}`}>{percentage}%</span>
             {remaining > 0 && (
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-gray-500">
                 {t('status.mlRemaining', { remaining: remaining.toLocaleString() })}
               </span>
             )}

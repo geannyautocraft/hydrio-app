@@ -37,9 +37,9 @@ export function CustomWaterInput() {
           placeholder={t('input.placeholder')}
           value={value}
           onChange={(e) => { setValue(e.target.value); setError(''); }}
-          className="min-w-0 flex-1 rounded-l-xl border border-r-0 border-gray-200 bg-white px-4 py-2.5 text-sm transition-colors focus:border-blue-400 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-500"
+          className="min-w-0 flex-1 rounded-l-xl border border-r-0 border-gray-300/50 bg-white/60 backdrop-blur-sm px-4 py-2.5 text-base text-gray-900 placeholder-gray-500 transition-colors focus:border-blue-400 focus:outline-none dark:border-slate-600/30 dark:bg-gray-800/60 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500"
         />
-        <button type="submit" className="rounded-r-xl bg-blue-100 px-5 py-2.5 text-sm font-semibold text-blue-600 transition-all hover:bg-blue-200 active:scale-95 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50">
+        <button type="submit" className="rounded-r-xl bg-blue-500 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-600 active:scale-95 dark:bg-blue-600 dark:hover:bg-blue-500">
           {t('input.add')}
         </button>
       </form>

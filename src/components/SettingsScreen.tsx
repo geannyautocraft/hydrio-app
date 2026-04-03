@@ -4,6 +4,7 @@ import { useHydrationStore } from '../store/useHydrationStore';
 import { useNotifications } from '../hooks/useNotifications';
 import { useAdaptiveGoal } from '../hooks/useAdaptiveGoal';
 import { usePremium } from '../hooks/usePremium';
+import { useBilling } from '../hooks/useBilling';
 import { useThemeStore } from '../store/useThemeStore';
 import { ProfileSwitcher } from './ProfileSwitcher';
 import { UpgradeModal } from './UpgradeModal';
@@ -46,6 +47,7 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
   const notifications = useNotifications();
   const breakdown = useAdaptiveGoal();
   const { isPremium } = usePremium();
+  const { restore, loading: billingLoading } = useBilling();
   const dark = useThemeStore((s) => s.dark);
   const toggleDark = useThemeStore((s) => s.toggle);
   const [showUpgrade, setShowUpgrade] = useState(false);
@@ -106,12 +108,12 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
     setPresetValues(presetValues.filter((_, i) => i !== index));
   };
 
-  const sectionClass = 'rounded-lg border border-gray-200 dark:border-gray-600 p-3';
-  const labelClass = 'mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300';
-  const inputClass = 'w-full rounded-lg border border-gray-200 px-3 py-2 text-sm transition-colors focus:border-blue-400 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500';
+  const sectionClass = 'rounded-lg border border-gray-300/50 dark:border-gray-600/50 glass-inner p-3';
+  const labelClass = 'mb-1.5 block text-sm font-semibold text-gray-800 dark:text-gray-200';
+  const inputClass = 'w-full rounded-lg border border-gray-300/60 px-3 py-2 text-base text-gray-900 bg-white/60 backdrop-blur-sm transition-colors focus:border-blue-400 focus:outline-none dark:border-gray-600/60 dark:bg-gray-800/60 dark:text-white dark:focus:border-blue-500';
 
   return (
-    <div className="rounded-xl bg-white p-5 shadow-sm dark:bg-gray-800">
+    <div className="rounded-2xl glass-strong p-5 shadow-lg shadow-blue-900/5">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-bold text-gray-800 dark:text-white">{t('settings.title')}</h2>
         <button onClick={onClose} className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300">
@@ -134,7 +136,7 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
                 className={`flex-1 rounded-lg px-2 py-2 text-xs font-medium transition-colors ${
                   i18n.language === lang.code
                     ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                    : 'bg-white/50 text-gray-700 hover:bg-white/70 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/15'
                 }`}
               >
                 {lang.label}
@@ -154,7 +156,7 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
           <label className={labelClass}>{t('settings.activityLevel')}</label>
           <div className="flex gap-1.5">
             {ACTIVITY_LEVELS.map((level) => (
-              <button key={level} type="button" onClick={() => setActivityLevel(level)} className={`flex-1 rounded-lg px-2 py-2 text-xs font-medium transition-colors ${userProfile.activityLevel === level ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'}`}>
+              <button key={level} type="button" onClick={() => setActivityLevel(level)} className={`flex-1 rounded-lg px-2 py-2 text-xs font-medium transition-colors ${userProfile.activityLevel === level ? 'bg-blue-500 text-white' : 'bg-white/50 text-gray-700 hover:bg-white/70 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/15'}`}>
                 {t(`activity.${level}`)}
               </button>
             ))}
@@ -165,10 +167,10 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
         <div className={sectionClass}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-700 dark:text-gray-300">{t('settings.weatherAdjustment')}</p>
-              <p className="text-xs text-gray-400">{t('settings.weatherDescription')}</p>
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{t('settings.weatherAdjustment')}</p>
+              <p className="text-xs text-gray-500">{t('settings.weatherDescription')}</p>
             </div>
-            <button type="button" onClick={() => setWeatherAdjust(!userProfile.weatherAdjust)} className={`relative h-6 w-11 rounded-full transition-colors ${userProfile.weatherAdjust ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'} cursor-pointer`}>
+            <button type="button" onClick={() => setWeatherAdjust(!userProfile.weatherAdjust)} className={`relative h-6 w-11 rounded-full transition-colors ${userProfile.weatherAdjust ? 'bg-blue-500' : 'bg-gray-400 dark:bg-gray-600'} cursor-pointer`}>
               <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${userProfile.weatherAdjust ? 'translate-x-5' : ''}`} />
             </button>
           </div>
@@ -193,10 +195,10 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
           <label htmlFor="settings-goal" className={labelClass}>{t('settings.dailyGoal')}</label>
           {hasValidWeight && (
             <div className="mb-2 flex gap-2">
-              <button type="button" onClick={() => { setUseRecommended(true); setGoalValue(String(breakdown.finalGoal)); }} className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${useRecommended ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}`}>
+              <button type="button" onClick={() => { setUseRecommended(true); setGoalValue(String(breakdown.finalGoal)); }} className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${useRecommended ? 'bg-blue-500 text-white' : 'bg-white/50 dark:bg-white/10 text-gray-700 dark:text-gray-300'}`}>
                 {t('settings.recommended')}
               </button>
-              <button type="button" onClick={() => setUseRecommended(false)} className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${!useRecommended ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}`}>
+              <button type="button" onClick={() => setUseRecommended(false)} className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${!useRecommended ? 'bg-blue-500 text-white' : 'bg-white/50 dark:bg-white/10 text-gray-700 dark:text-gray-300'}`}>
                 {t('settings.custom')}
               </button>
             </div>
@@ -210,7 +212,7 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
           <div className="space-y-2">
             {presetValues.map((val, i) => (
               <div key={i} className="flex items-center gap-2">
-                <input type="number" min={1} max={MAX_SINGLE_ENTRY_ML} value={val} onChange={(e) => updatePreset(i, e.target.value)} className="flex-1 rounded-lg border border-gray-200 px-3 py-1.5 text-sm transition-colors focus:border-blue-400 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500" />
+                <input type="number" min={1} max={MAX_SINGLE_ENTRY_ML} value={val} onChange={(e) => updatePreset(i, e.target.value)} className="flex-1 rounded-lg border border-gray-300/60 bg-white/60 px-3 py-1.5 text-base text-gray-900 transition-colors focus:border-blue-400 focus:outline-none dark:border-gray-600/60 dark:bg-gray-800/60 dark:text-white dark:focus:border-blue-500" />
                 {presetValues.length > 1 && (
                   <button type="button" onClick={() => removePreset(i)} className="rounded p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 dark:hover:text-red-400">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -234,19 +236,19 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
           <div className={sectionClass}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-700 dark:text-gray-300">
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
                   {notifications.enabled ? t('settings.remindersOn') : t('settings.remindersOff')}
                 </p>
-                {!notifications.supported && <p className="text-xs text-gray-400">{t('settings.notSupported')}</p>}
+                {!notifications.supported && <p className="text-xs text-gray-500">{t('settings.notSupported')}</p>}
               </div>
-              <button type="button" onClick={async () => { if (notifications.enabled) notifications.disable(); else await notifications.enable(); }} disabled={!notifications.supported} className={`relative h-6 w-11 rounded-full transition-colors ${notifications.enabled ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'} ${!notifications.supported ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
+              <button type="button" onClick={async () => { if (notifications.enabled) notifications.disable(); else await notifications.enable(); }} disabled={!notifications.supported} className={`relative h-6 w-11 rounded-full transition-colors ${notifications.enabled ? 'bg-blue-500' : 'bg-gray-400 dark:bg-gray-600'} ${!notifications.supported ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
                 <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${notifications.enabled ? 'translate-x-5' : ''}`} />
               </button>
             </div>
             {notifications.enabled && (
               <div className="mt-3 flex gap-1.5">
                 {INTERVAL_OPTIONS.map((opt) => (
-                  <button key={opt.value} type="button" onClick={() => notifications.setInterval(opt.value)} className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${notifications.intervalMinutes === opt.value ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}`}>
+                  <button key={opt.value} type="button" onClick={() => notifications.setInterval(opt.value)} className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${notifications.intervalMinutes === opt.value ? 'bg-blue-500 text-white' : 'bg-white/50 dark:bg-white/10 text-gray-700 dark:text-gray-300'}`}>
                     {t(opt.labelKey)}
                   </button>
                 ))}
@@ -258,8 +260,8 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
         {/* Dark Mode */}
         <div className={sectionClass}>
           <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-700 dark:text-gray-300">{t('settings.darkMode')}</p>
-            <button type="button" onClick={toggleDark} className={`relative h-6 w-11 rounded-full transition-colors cursor-pointer ${dark ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
+            <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{t('settings.darkMode')}</p>
+            <button type="button" onClick={toggleDark} className={`relative h-6 w-11 rounded-full transition-colors cursor-pointer ${dark ? 'bg-blue-500' : 'bg-gray-400 dark:bg-gray-600'}`}>
               <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${dark ? 'translate-x-5' : ''}`} />
             </button>
           </div>
@@ -268,9 +270,14 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
         <ProfileSwitcher />
 
         {!isPremium ? (
-          <button type="button" onClick={() => setShowUpgrade(true)} className="w-full rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:from-amber-600 hover:to-orange-600 active:scale-[0.98]">
-            {t('settings.upgradePremium')}
-          </button>
+          <div className="space-y-2">
+            <button type="button" onClick={() => setShowUpgrade(true)} className="w-full rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:from-amber-600 hover:to-orange-600 active:scale-[0.98]">
+              {t('settings.upgradePremium')}
+            </button>
+            <button type="button" onClick={restore} disabled={billingLoading} className="w-full rounded-lg py-2 text-xs font-medium text-blue-500 transition-colors hover:text-blue-700 disabled:opacity-50 dark:text-blue-400">
+              {t('premium.restorePurchases')}
+            </button>
+          </div>
         ) : (
           <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-center dark:border-green-800 dark:bg-green-900/20">
             <p className="text-sm font-medium text-green-700 dark:text-green-400">{t('settings.premiumActive')}</p>
@@ -283,7 +290,7 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
           <button type="submit" className="flex-1 rounded-lg bg-blue-500 py-2 text-sm font-medium text-white transition-all hover:bg-blue-600 active:scale-[0.98]">
             {t('settings.save')}
           </button>
-          <button type="button" onClick={onClose} className="flex-1 rounded-lg border border-gray-200 py-2 text-sm font-medium text-gray-600 transition-all hover:bg-gray-50 active:scale-[0.98] dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
+          <button type="button" onClick={onClose} className="flex-1 rounded-lg border border-gray-300/60 py-2 text-sm font-medium text-gray-700 transition-all hover:bg-white/50 active:scale-[0.98] dark:border-gray-600/60 dark:text-gray-300 dark:hover:bg-white/10">
             {t('settings.cancel')}
           </button>
         </div>

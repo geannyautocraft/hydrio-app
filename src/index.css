@@ -2,15 +2,28 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+html {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
-  background-color: #f0f9ff;
   min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  touch-action: manipulation;
+  /* Glass background gradient */
+  background: linear-gradient(145deg, #dbeafe 0%, #e0f2fe 30%, #f0f9ff 60%, #ede9fe 100%);
+  background-attachment: fixed;
 }
 
 .dark body {
-  background-color: #111827;
+  background: linear-gradient(145deg, #0f172a 0%, #1e1b4b 40%, #0f172a 70%, #172554 100%);
+  background-attachment: fixed;
 }
 
 input[type="number"]::-webkit-inner-spin-button,
@@ -23,6 +36,60 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
+input, select, textarea {
+  font-size: 16px;
+}
+
 .progress-ring {
-  filter: drop-shadow(0 0 3px currentColor);
+  filter: drop-shadow(0 0 6px currentColor);
+}
+
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Glassmorphism utility classes ── */
+
+.glass {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.dark .glass {
+  background: rgba(30, 41, 59, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+.dark .glass-strong {
+  background: rgba(30, 41, 59, 0.72);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.glass-subtle {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass-subtle {
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.08);
+}
+
+.glass-inner {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass-inner {
+  background: rgba(255, 255, 255, 0.05);
 }

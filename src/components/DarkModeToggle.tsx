@@ -8,7 +8,7 @@ export function DarkModeToggle() {
   return (
     <button
       onClick={toggle}
-      className={`rounded-lg p-2 transition-colors ${
+      className={`rounded-lg p-2.5 transition-colors ${
         dark
           ? 'bg-gray-700 text-yellow-400'
           : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600'

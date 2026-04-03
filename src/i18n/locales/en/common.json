@@ -206,7 +206,11 @@
     "save58": "Save 58%",
     "month": "month",
     "year": "year",
-    "oneTime": "one-time"
+    "oneTime": "one-time",
+    "restorePurchases": "Restore Purchases",
+    "restoreSuccess": "Purchases restored successfully!",
+    "restoreEmpty": "No previous purchases found.",
+    "purchaseError": "Purchase could not be completed. Please try again."
   },
   "coach": {
     "title": "Smart Hydration Coach",

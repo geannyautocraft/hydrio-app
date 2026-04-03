@@ -8,7 +8,7 @@ export function DailyLogList() {
   const entries = [...todayRecord.entries].reverse();
 
   return (
-    <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+    <div className="rounded-2xl glass p-4 shadow-lg shadow-blue-900/5">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="flex items-center gap-1.5 text-sm font-semibold text-gray-600 dark:text-gray-300">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
@@ -25,7 +25,7 @@ export function DailyLogList() {
         )}
       </div>
       {entries.length === 0 ? (
-        <p className="py-6 text-center text-sm text-gray-400">{t('log.empty')}</p>
+        <p className="py-6 text-center text-sm text-gray-500">{t('log.empty')}</p>
       ) : (
         <ul className="max-h-72 space-y-1.5 overflow-y-auto">
           {entries.map((entry) => (

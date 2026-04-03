@@ -12,7 +12,7 @@ export function HydrationStats() {
     : '—';
 
   return (
-    <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+    <div className="rounded-2xl glass p-4 shadow-lg shadow-blue-900/5">
       <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">{t('stats.title')}</h2>
       <div className="grid grid-cols-3 gap-3">
         <StatItem label={t('stats.dailyAvg')} value={`${stats.averageMl.toLocaleString()} ml`} />
@@ -27,7 +27,7 @@ function StatItem({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg bg-gray-50 px-3 py-2.5 text-center dark:bg-gray-700/50">
       <p className="text-sm font-semibold text-gray-800 dark:text-white">{value}</p>
-      <p className="mt-0.5 text-xs text-gray-400">{label}</p>
+      <p className="mt-0.5 text-xs text-gray-500">{label}</p>
     </div>
   );
 }

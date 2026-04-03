@@ -60,7 +60,7 @@ export function ExtendedHistory() {
 
   return (
     <>
-      <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+      <div className="rounded-2xl glass p-4 shadow-lg shadow-blue-900/5">
         <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">{t('extendedHistory.title')}</h2>
 
         <div className="mb-3 flex gap-1.5">
@@ -87,23 +87,23 @@ export function ExtendedHistory() {
         </div>
 
         <div className="mb-3 grid grid-cols-3 gap-2">
-          <div className="rounded-lg bg-gray-50 px-2.5 py-2 text-center dark:bg-gray-700/50">
+          <div className="rounded-lg glass-inner px-2.5 py-2 text-center">
             <p className="text-sm font-semibold text-gray-800 dark:text-white">{stats.avgMl.toLocaleString()}</p>
-            <p className="text-[10px] text-gray-400">{t('extendedHistory.avgPerDay')}</p>
+            <p className="text-[10px] text-gray-500">{t('extendedHistory.avgPerDay')}</p>
           </div>
-          <div className="rounded-lg bg-gray-50 px-2.5 py-2 text-center dark:bg-gray-700/50">
+          <div className="rounded-lg glass-inner px-2.5 py-2 text-center">
             <p className="text-sm font-semibold text-gray-800 dark:text-white">{stats.totalMl.toLocaleString()}</p>
-            <p className="text-[10px] text-gray-400">{t('extendedHistory.totalMl')}</p>
+            <p className="text-[10px] text-gray-500">{t('extendedHistory.totalMl')}</p>
           </div>
-          <div className="rounded-lg bg-gray-50 px-2.5 py-2 text-center dark:bg-gray-700/50">
+          <div className="rounded-lg glass-inner px-2.5 py-2 text-center">
             <p className="text-sm font-semibold text-gray-800 dark:text-white">{stats.completionRate}%</p>
-            <p className="text-[10px] text-gray-400">{t('extendedHistory.goalRate')}</p>
+            <p className="text-[10px] text-gray-500">{t('extendedHistory.goalRate')}</p>
           </div>
         </div>
 
         <div className="max-h-64 space-y-1.5 overflow-y-auto">
           {history.length === 0 ? (
-            <p className="py-4 text-center text-xs text-gray-400">{t('extendedHistory.noData')}</p>
+            <p className="py-4 text-center text-xs text-gray-500">{t('extendedHistory.noData')}</p>
           ) : (
             history.map(({ dateKey, total }) => {
               const percentage = goalMl > 0 ? Math.round((total / goalMl) * 100) : 0;

@@ -82,8 +82,8 @@ export const PREMIUM_FEATURES: Record<PremiumFeature, { label: string; descripti
 };
 
 export const PREMIUM_PRICING = {
-  monthly: { price: 2.99, label: '$2.99/month' },
-  yearly: { price: 14.99, label: '$14.99/year', savings: '58%' },
+  monthly: { price: 0.99, label: '$0.99/month' },
+  yearly: { price: 4.99, label: '$4.99/year', savings: '58%' },
   lifetime: { price: 9.99, label: '$9.99 once' },
 } as const;
 

@@ -1,5 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Capacitor } from '@capacitor/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
 import { useHydrationStore, useTodayRecord } from '../store/useHydrationStore';
 
 const MESSAGE_KEYS = [
@@ -20,6 +22,24 @@ function getRandomKey(keys: string[]) {
   return keys[Math.floor(Math.random() * keys.length)];
 }
 
+const NOTIFICATION_CHANNEL_ID = 'hydrio-reminders';
+
+async function ensureNativeChannel() {
+  if (!Capacitor.isNativePlatform()) return;
+  try {
+    await LocalNotifications.createChannel({
+      id: NOTIFICATION_CHANNEL_ID,
+      name: 'Hydration Reminders',
+      description: 'Reminders to drink water',
+      importance: 3,
+      visibility: 1,
+      vibration: true,
+    });
+  } catch {
+    // Channel may already exist
+  }
+}
+
 export function useNotifications() {
   const { t } = useTranslation();
   const { enabled, intervalMinutes } = useHydrationStore((s) => s.notifications);
@@ -30,6 +50,8 @@ export function useNotifications() {
   const tRef = useRef(t);
   tRef.current = t;
 
+  const isNative = Capacitor.isNativePlatform();
+
   const clearTimer = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -38,37 +60,89 @@ export function useNotifications() {
   }, []);
 
   const requestPermission = useCallback(async () => {
+    if (isNative) {
+      const result = await LocalNotifications.requestPermissions();
+      return result.display === 'granted';
+    }
+    // Browser fallback
     if (!('Notification' in window)) return false;
     if (Notification.permission === 'granted') return true;
     if (Notification.permission === 'denied') return false;
     const result = await Notification.requestPermission();
     return result === 'granted';
-  }, []);
+  }, [isNative]);
+
+  const scheduleNativeNotifications = useCallback(async (intervalMins: number) => {
+    if (!isNative) return;
+
+    // Cancel existing scheduled notifications
+    const pending = await LocalNotifications.getPending();
+    if (pending.notifications.length > 0) {
+      await LocalNotifications.cancel(pending);
+    }
+
+    await ensureNativeChannel();
+
+    // Schedule repeating notifications for the next 12 hours
+    const notifications = [];
+    const now = Date.now();
+    const count = Math.floor((12 * 60) / intervalMins);
+
+    for (let i = 1; i <= count; i++) {
+      const keys = i <= count * 0.6 ? MESSAGE_KEYS : GENTLE_MESSAGE_KEYS;
+      notifications.push({
+        id: 1000 + i,
+        title: 'Hydrio',
+        body: tRef.current(getRandomKey(keys)),
+        schedule: { at: new Date(now + i * intervalMins * 60 * 1000) },
+        channelId: NOTIFICATION_CHANNEL_ID,
+        smallIcon: 'ic_launcher',
+        iconColor: '#3B82F6',
+      });
+    }
+
+    await LocalNotifications.schedule({ notifications });
+  }, [isNative]);
 
   const enable = useCallback(async () => {
     const granted = await requestPermission();
     if (granted) {
       setNotifications({ enabled: true });
+      if (isNative) {
+        await scheduleNativeNotifications(intervalMinutes);
+      }
     }
     return granted;
-  }, [requestPermission, setNotifications]);
+  }, [requestPermission, setNotifications, isNative, scheduleNativeNotifications, intervalMinutes]);
 
-  const disable = useCallback(() => {
+  const disable = useCallback(async () => {
     setNotifications({ enabled: false });
     clearTimer();
-  }, [setNotifications, clearTimer]);
+    if (isNative) {
+      const pending = await LocalNotifications.getPending();
+      if (pending.notifications.length > 0) {
+        await LocalNotifications.cancel(pending);
+      }
+    }
+  }, [setNotifications, clearTimer, isNative]);
 
   const setInterval_ = useCallback(
     (minutes: number) => {
       setNotifications({ intervalMinutes: minutes });
+      if (isNative && enabled) {
+        scheduleNativeNotifications(minutes);
+      }
     },
-    [setNotifications]
+    [setNotifications, isNative, enabled, scheduleNativeNotifications]
   );
 
   const currentMl = todayRecord.totalMl;
   const percentage = goalMl > 0 ? Math.round((currentMl / goalMl) * 100) : 0;
 
+  // Browser notifications (fallback for non-native)
   useEffect(() => {
+    if (isNative) return;
+
     clearTimer();
 
     if (!enabled || !('Notification' in window) || Notification.permission !== 'granted') {
@@ -76,10 +150,8 @@ export function useNotifications() {
     }
 
     const sendNotification = () => {
-      // Skip if goal already completed
       if (percentage >= 100) return;
 
-      // Check if user recently logged water (within last 15 minutes)
       const now = Date.now();
       const entries = todayRecord.entries;
       if (entries.length > 0) {
@@ -89,7 +161,6 @@ export function useNotifications() {
         if (minutesSinceLastLog < 15) return;
       }
 
-      // Choose message based on progress
       const keys = percentage >= 60 ? GENTLE_MESSAGE_KEYS : MESSAGE_KEYS;
 
       new Notification('Hydrio', {
@@ -99,9 +170,6 @@ export function useNotifications() {
       });
     };
 
-    // Adjust interval based on progress:
-    // If doing well (>=75%), double the interval
-    // If behind (<25%), use standard interval
     const adjustedInterval = percentage >= 75
       ? intervalMinutes * 2
       : intervalMinutes;
@@ -109,15 +177,24 @@ export function useNotifications() {
     intervalRef.current = setInterval(sendNotification, adjustedInterval * 60 * 1000);
 
     return clearTimer;
-  }, [enabled, intervalMinutes, clearTimer, percentage, todayRecord.entries]);
+  }, [isNative, enabled, intervalMinutes, clearTimer, percentage, todayRecord.entries]);
+
+  // Native: reschedule when enabled or interval changes
+  useEffect(() => {
+    if (!isNative || !enabled) return;
+    scheduleNativeNotifications(intervalMinutes);
+  }, [isNative, enabled, intervalMinutes, scheduleNativeNotifications]);
+
+  const checkSupported = () => {
+    if (isNative) return true;
+    return typeof window !== 'undefined' && 'Notification' in window;
+  };
 
   return {
     enabled,
     intervalMinutes,
-    supported: typeof window !== 'undefined' && 'Notification' in window,
-    permission: typeof window !== 'undefined' && 'Notification' in window
-      ? Notification.permission
-      : 'denied' as NotificationPermission,
+    supported: checkSupported(),
+    permission: 'default' as NotificationPermission,
     enable,
     disable,
     setInterval: setInterval_,

@@ -60,9 +60,9 @@ function AdvancedInsightsContent() {
 
   if (!insights) {
     return (
-      <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+      <div className="rounded-2xl glass p-4 shadow-lg shadow-blue-900/5">
         <h2 className="mb-2 text-sm font-semibold text-gray-600 dark:text-gray-300">{t('advancedInsights.title')}</h2>
-        <p className="text-xs text-gray-400">{t('advancedInsights.needMoreData')}</p>
+        <p className="text-xs text-gray-500">{t('advancedInsights.needMoreData')}</p>
       </div>
     );
   }
@@ -75,14 +75,14 @@ function AdvancedInsightsContent() {
         : 'text-red-500 dark:text-red-400';
 
   return (
-    <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+    <div className="rounded-2xl glass p-4 shadow-lg shadow-blue-900/5">
       <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">{t('advancedInsights.title')}</h2>
 
       {/* Consistency Score */}
-      <div className="mb-4 rounded-lg bg-gray-50 p-3 dark:bg-gray-700/50">
+      <div className="mb-4 rounded-lg glass-inner p-3">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs text-gray-400">{t('advancedInsights.consistencyScore')}</p>
+            <p className="text-xs text-gray-500">{t('advancedInsights.consistencyScore')}</p>
             <p className={`text-2xl font-bold ${scoreColor}`}>{insights.consistencyScore}%</p>
           </div>
           <div className="h-12 w-12">
@@ -110,10 +110,10 @@ function AdvancedInsightsContent() {
         <p className="mb-2 text-xs font-medium text-gray-500 dark:text-gray-400">{t('advancedInsights.monthlyTrends')}</p>
         <div className="grid grid-cols-3 gap-2">
           {insights.monthlyTrends.map((m) => (
-            <div key={m.month} className="rounded-lg bg-gray-50 px-2.5 py-2 text-center dark:bg-gray-700/50">
-              <p className="text-xs text-gray-400">{m.month}</p>
+            <div key={m.month} className="rounded-lg glass-inner px-2.5 py-2 text-center">
+              <p className="text-xs text-gray-500">{m.month}</p>
               <p className="text-sm font-semibold text-gray-800 dark:text-white">{m.avg.toLocaleString()}</p>
-              <p className="text-[10px] text-gray-400">{t('advancedInsights.mlAvg')}</p>
+              <p className="text-[10px] text-gray-500">{t('advancedInsights.mlAvg')}</p>
             </div>
           ))}
         </div>
@@ -132,9 +132,9 @@ function AdvancedInsightsContent() {
 
 function StatItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-gray-50 px-2.5 py-2 dark:bg-gray-700/50">
+    <div className="rounded-lg glass-inner px-2.5 py-2">
       <p className="text-sm font-semibold text-gray-800 dark:text-white">{value}</p>
-      <p className="text-[10px] text-gray-400">{label}</p>
+      <p className="text-[10px] text-gray-500">{label}</p>
     </div>
   );
 }

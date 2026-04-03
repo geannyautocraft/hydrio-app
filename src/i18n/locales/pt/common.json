@@ -206,7 +206,11 @@
     "save58": "Economize 58%",
     "month": "mês",
     "year": "ano",
-    "oneTime": "pagamento único"
+    "oneTime": "pagamento único",
+    "restorePurchases": "Restaurar Compras",
+    "restoreSuccess": "Compras restauradas com sucesso!",
+    "restoreEmpty": "Nenhuma compra anterior encontrada.",
+    "purchaseError": "Compra não pôde ser concluída. Tente novamente."
   },
   "coach": {
     "title": "Coach de Hidratação Inteligente",

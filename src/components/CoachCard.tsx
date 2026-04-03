@@ -41,7 +41,7 @@ export function CoachCard() {
   if (!isPremium) {
     return (
       <>
-        <div className="relative overflow-hidden rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+        <div className="relative overflow-hidden rounded-2xl glass p-4 shadow-lg shadow-blue-900/5">
           <div className="mb-2 flex items-center gap-2">
             <span className="text-lg">🧠</span>
             <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200">{t('coach.title')}</h3>
@@ -73,7 +73,7 @@ export function CoachCard() {
   }
 
   return (
-    <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+    <div className="rounded-2xl glass p-4 shadow-lg shadow-blue-900/5">
       <div className="mb-3 flex items-center gap-2">
         <span className="text-lg">🧠</span>
         <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200">{t('coach.title')}</h3>
