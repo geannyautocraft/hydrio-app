@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#eef2ff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0b1024" media="(prefers-color-scheme: dark)">
+    <title>Lumedev — Cozy apps that feel personal</title>
+    <meta name="description" content="A small indie studio crafting thoughtful mobile apps. Maker of Hydrio, a smart hydration tracker.">
+
+    <meta property="og:title" content="Lumedev — Cozy apps that feel personal">
+    <meta property="og:description" content="A small indie studio crafting thoughtful mobile apps. Maker of Hydrio.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%22%236366F1%22/><stop offset=%221%22 stop-color=%22%2338BDF8%22/></linearGradient></defs><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22url(%23g)%22/><text x=%2250%22 y=%2272%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Inter,sans-serif%22 font-weight=%22900%22 font-size=%2260%22>L</text></svg>">
+
+    <style>
+        :root {
+            color-scheme: light dark;
+            --ink: #0b1024;
+            --ink-soft: #3b3f55;
+            --ink-mute: #6b7088;
+            --line: rgba(15, 18, 40, 0.08);
+            --glass-bg: rgba(255, 255, 255, 0.55);
+            --glass-bg-strong: rgba(255, 255, 255, 0.74);
+            --glass-edge: rgba(255, 255, 255, 0.7);
+            --grad-1: #C7D2FE;
+            --grad-2: #A5F3FC;
+            --grad-3: #DDD6FE;
+            --accent: #4F46E5;
+            --accent-2: #38BDF8;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --ink: #f4f5fb;
+                --ink-soft: #c8cbe0;
+                --ink-mute: #8b8fae;
+                --line: rgba(255, 255, 255, 0.08);
+                --glass-bg: rgba(20, 24, 50, 0.55);
+                --glass-bg-strong: rgba(20, 24, 50, 0.72);
+                --glass-edge: rgba(148, 163, 184, 0.18);
+                --grad-1: #1e1b4b;
+                --grad-2: #0c4a6e;
+                --grad-3: #312e81;
+                --accent: #818CF8;
+                --accent-2: #67E8F9;
+            }
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-feature-settings: 'cv11', 'ss01', 'ss03';
+            color: var(--ink);
+            line-height: 1.55;
+            min-height: 100vh;
+            background: #f5f6fb;
+            position: relative;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body { background: #0b1024; }
+        }
+
+        /* ─── Aurora backdrop ─────────────────────────── */
+        .aurora {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .aurora::before {
+            content: "";
+            position: absolute;
+            inset: -20%;
+            background:
+                radial-gradient(40% 50% at 15% 20%, var(--grad-1) 0%, transparent 60%),
+                radial-gradient(45% 55% at 85% 30%, var(--grad-2) 0%, transparent 60%),
+                radial-gradient(50% 50% at 50% 90%, var(--grad-3) 0%, transparent 60%);
+            filter: blur(40px) saturate(120%);
+            opacity: 0.85;
+            animation: aurora-drift 28s ease-in-out infinite alternate;
+        }
+        @keyframes aurora-drift {
+            0%   { transform: translate3d(0, 0, 0) scale(1); }
+            50%  { transform: translate3d(-3%, 2%, 0) scale(1.05); }
+            100% { transform: translate3d(2%, -2%, 0) scale(1.02); }
+        }
+
+        /* Grain for premium texture */
+        .grain {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.35;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+        }
+        @media (prefers-color-scheme: dark) {
+            .grain { opacity: 0.5; mix-blend-mode: soft-light; }
+        }
+
+        /* ─── Glass utilities ─────────────────────────── */
+        .glass {
+            position: relative;
+            background: var(--glass-bg);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-edge);
+            border-radius: 22px;
+            box-shadow:
+                0 1px 0 0 rgba(255, 255, 255, 0.55) inset,
+                0 20px 60px -20px rgba(15, 23, 42, 0.18);
+        }
+        .glass-strong {
+            background: var(--glass-bg-strong);
+            -webkit-backdrop-filter: blur(28px) saturate(200%);
+            backdrop-filter: blur(28px) saturate(200%);
+            border: 1px solid var(--glass-edge);
+            border-radius: 26px;
+            box-shadow:
+                0 1px 0 0 rgba(255, 255, 255, 0.6) inset,
+                0 30px 80px -25px rgba(15, 23, 42, 0.22);
+        }
+        @media (prefers-color-scheme: dark) {
+            .glass, .glass-strong {
+                box-shadow:
+                    0 1px 0 0 rgba(255, 255, 255, 0.04) inset,
+                    0 30px 80px -25px rgba(0, 0, 0, 0.6);
+            }
+        }
+
+        /* ─── Header ──────────────────────────────────── */
+        header {
+            position: sticky;
+            top: 14px;
+            z-index: 50;
+            margin: 14px auto 0;
+            max-width: 920px;
+            padding: 10px 14px 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 999px;
+        }
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: -0.01em;
+            color: var(--ink);
+            text-decoration: none;
+        }
+        .logo-mark {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: conic-gradient(from 200deg, #6366F1, #38BDF8, #A78BFA, #6366F1);
+            display: grid;
+            place-items: center;
+            color: white;
+            font-weight: 900;
+            font-size: 15px;
+            box-shadow:
+                0 2px 6px rgba(99, 102, 241, 0.35),
+                0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+        }
+        nav { display: flex; gap: 6px; }
+        nav a {
+            position: relative;
+            color: var(--ink-soft);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 999px;
+            transition: color 0.2s ease, background 0.2s ease;
+        }
+        nav a:hover {
+            color: var(--ink);
+            background: rgba(255, 255, 255, 0.5);
+        }
+        @media (prefers-color-scheme: dark) {
+            nav a:hover { background: rgba(255, 255, 255, 0.06); }
+        }
+
+        /* ─── Container ───────────────────────────────── */
+        main {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 0 22px;
+        }
+        section {
+            margin: 96px 0;
+            scroll-margin-top: 96px;
+        }
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-edge);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--ink-soft);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .eyebrow::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);
+        }
+        .section-label {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--ink-mute);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-label::before {
+            content: "";
+            width: 18px;
+            height: 1px;
+            background: currentColor;
+            opacity: 0.4;
+        }
+
+        /* ─── Hero ────────────────────────────────────── */
+        .hero {
+            text-align: center;
+            margin: 88px auto 110px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .hero h1 {
+            font-size: clamp(40px, 7vw, 72px);
+            font-weight: 800;
+            letter-spacing: -0.035em;
+            line-height: 1.02;
+            margin: 22px 0 22px;
+            color: var(--ink);
+            max-width: 14ch;
+        }
+        .hero h1 em {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-style: italic;
+            font-weight: 400;
+            background: linear-gradient(100deg, var(--accent) 10%, var(--accent-2) 90%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.01em;
+            padding-right: 0.06em;
+        }
+        .hero p {
+            font-size: clamp(16px, 2vw, 19px);
+            color: var(--ink-soft);
+            max-width: 480px;
+            margin: 0 auto;
+            text-wrap: balance;
+        }
+        .hero-cta {
+            margin-top: 32px;
+            display: inline-flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* ─── Buttons ─────────────────────────────────── */
+        .btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            line-height: 1;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.2s ease;
+            cursor: pointer;
+            border: 0;
+            font-family: inherit;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary {
+            color: white;
+            background: linear-gradient(135deg, #4F46E5 0%, #6366F1 45%, #38BDF8 100%);
+            background-size: 200% 200%;
+            background-position: 0% 50%;
+            box-shadow:
+                0 1px 0 0 rgba(255, 255, 255, 0.35) inset,
+                0 10px 30px -8px rgba(79, 70, 229, 0.5),
+                0 2px 6px rgba(15, 23, 42, 0.15);
+        }
+        .btn-primary:hover {
+            background-position: 100% 50%;
+            box-shadow:
+                0 1px 0 0 rgba(255, 255, 255, 0.35) inset,
+                0 14px 36px -8px rgba(79, 70, 229, 0.58),
+                0 2px 6px rgba(15, 23, 42, 0.15);
+        }
+        .btn-secondary {
+            color: var(--ink);
+            background: var(--glass-bg-strong);
+            border: 1px solid var(--glass-edge);
+            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
+        }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.9); }
+        @media (prefers-color-scheme: dark) {
+            .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
+        }
+        .btn .arrow {
+            transition: transform 0.2s ease;
+        }
+        .btn:hover .arrow { transform: translateX(3px); }
+
+        /* ─── Principles row ──────────────────────────── */
+        .principles {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 96px 0;
+        }
+        .principle {
+            padding: 22px 20px;
+            text-align: left;
+        }
+        .principle .num {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-style: italic;
+            font-size: 22px;
+            color: var(--accent);
+            display: block;
+            margin-bottom: 8px;
+            opacity: 0.85;
+        }
+        .principle h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 4px;
+            letter-spacing: -0.01em;
+        }
+        .principle p {
+            font-size: 13.5px;
+            color: var(--ink-mute);
+            line-height: 1.5;
+        }
+
+        /* ─── Project card ────────────────────────────── */
+        .project-card {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 28px;
+            align-items: center;
+            padding: 28px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-3px);
+        }
+        .project-mascot {
+            width: 140px;
+            height: 140px;
+            display: grid;
+            place-items: center;
+            background: radial-gradient(circle at 50% 35%, rgba(56, 189, 248, 0.18), transparent 65%);
+            border-radius: 28px;
+            position: relative;
+        }
+        .project-mascot svg {
+            animation: float 5.5s ease-in-out infinite;
+            filter: drop-shadow(0 14px 24px rgba(37, 99, 235, 0.28));
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-6px); }
+        }
+        .project-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .project-info h3 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--ink);
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+        .project-info p {
+            color: var(--ink-soft);
+            font-size: 15px;
+            margin-bottom: 16px;
+            text-wrap: pretty;
+        }
+        .project-meta {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 16px;
+            font-size: 12.5px;
+            color: var(--ink-mute);
+            flex-wrap: wrap;
+        }
+        .project-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .project-meta .dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0.45;
+        }
+        .project-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .project-actions .btn { font-size: 13px; padding: 10px 16px; }
+
+        /* ─── About ───────────────────────────────────── */
+        .about-card { padding: 32px; }
+        .about-card p {
+            font-size: 16.5px;
+            color: var(--ink-soft);
+            margin-bottom: 14px;
+            line-height: 1.65;
+            text-wrap: pretty;
+        }
+        .about-card p:last-child { margin-bottom: 0; }
+        .about-card strong { color: var(--ink); font-weight: 700; }
+        .about-card .signature {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-style: italic;
+            font-size: 18px;
+            color: var(--ink-mute);
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px dashed var(--line);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .about-card .signature::before {
+            content: "—";
+            opacity: 0.5;
+        }
+
+        /* ─── Contact ─────────────────────────────────── */
+        .contact-stack { display: grid; gap: 10px; }
+        .contact-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 24px;
+            transition: transform 0.18s ease, background 0.18s ease;
+        }
+        .contact-row:hover { transform: translateY(-1px); }
+        .contact-row .left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .contact-row .icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.18), rgba(56, 189, 248, 0.18));
+            display: grid;
+            place-items: center;
+            color: var(--accent);
+        }
+        .contact-row .label {
+            font-size: 11.5px;
+            color: var(--ink-mute);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .contact-row .value {
+            font-size: 14.5px;
+            color: var(--ink);
+            font-weight: 600;
+        }
+        .contact-row a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .contact-row a:hover { text-decoration: underline; }
+
+        /* ─── Footer ──────────────────────────────────── */
+        footer {
+            text-align: center;
+            padding: 56px 20px 40px;
+            color: var(--ink-mute);
+            font-size: 13px;
+        }
+        footer .foot-mark {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--ink-soft);
+        }
+        footer .foot-mark .logo-mark { width: 22px; height: 22px; font-size: 11px; }
+        footer .fine { opacity: 0.85; }
+
+        /* ─── Reveal on scroll ────────────────────────── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(14px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.in {
+            opacity: 1;
+            transform: none;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1; transform: none; transition: none; }
+            .project-mascot svg { animation: none; }
+            .aurora::before { animation: none; }
+        }
+
+        /* ─── Mobile ──────────────────────────────────── */
+        @media (max-width: 720px) {
+            section { margin: 72px 0; }
+            .principles { grid-template-columns: 1fr; }
+            .project-card { grid-template-columns: 1fr; text-align: center; padding: 24px 20px; }
+            .project-mascot { margin: 0 auto; }
+            .project-actions, .project-meta { justify-content: center; }
+            .contact-row { padding: 16px 18px; }
+            nav { gap: 0; }
+            nav a { padding: 6px 10px; font-size: 13px; }
+            header { padding: 8px 8px 8px 14px; }
+            .hero { margin: 64px auto 80px; }
+            .about-card { padding: 26px 22px; }
+        }
+
+        @media (max-width: 420px) {
+            nav a:not(:last-child) { display: none; }
+            .hero-cta { width: 100%; flex-direction: column; }
+            .hero-cta .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="aurora" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="glass">
+        <a class="logo" href="#top" aria-label="Lumedev — home">
+            <span class="logo-mark" aria-hidden="true">L</span>
+            <span>Lumedev</span>
+        </a>
+        <nav aria-label="Primary">
+            <a href="#projects">Projects</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <main id="top">
+        <section class="hero">
+            <span class="eyebrow reveal">Indie studio · Brazil</span>
+            <h1 class="reveal">We build cozy apps<br>that feel <em>personal</em>.</h1>
+            <p class="reveal">A small studio crafting thoughtful mobile experiences. One product at a time, made with care — no dark patterns, no shortcuts.</p>
+            <div class="hero-cta reveal">
+                <a class="btn btn-primary" href="#projects">See our work <span class="arrow">→</span></a>
+                <a class="btn btn-secondary" href="#contact">Say hi</a>
+            </div>
+        </section>
+
+        <section class="principles" aria-label="What we believe">
+            <div class="glass principle reveal">
+                <span class="num">01</span>
+                <h4>Built for humans</h4>
+                <p>Calm interfaces, gentle defaults, and copy that talks like a person — not a funnel.</p>
+            </div>
+            <div class="glass principle reveal">
+                <span class="num">02</span>
+                <h4>No dark patterns</h4>
+                <p>No manipulative paywalls, no nag screens, no creepy analytics. Just useful tools.</p>
+            </div>
+            <div class="glass principle reveal">
+                <span class="num">03</span>
+                <h4>One thing, done well</h4>
+                <p>Each app solves a single problem really well, with the polish a daily-use tool deserves.</p>
+            </div>
+        </section>
+
+        <section id="projects">
+            <div class="section-label reveal">Projects</div>
+            <article class="glass project-card reveal">
+                <div class="project-mascot" aria-hidden="true">
+                    <svg width="120" height="144" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="hydrio-body" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#BAE6FD"/>
+                                <stop offset="55%" stop-color="#60A5FA"/>
+                                <stop offset="100%" stop-color="#2563EB"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M50 6 C35 26 20 48 18 76 C18 100 32 115 50 115 C68 115 82 100 82 76 C80 48 65 26 50 6 Z" fill="url(#hydrio-body)"/>
+                        <ellipse cx="35" cy="50" rx="5" ry="12" fill="white" opacity="0.55"/>
+                        <ellipse cx="40" cy="30" rx="2.5" ry="5" fill="white" opacity="0.7"/>
+                        <ellipse cx="32" cy="92" rx="4" ry="3" fill="#FCA5A5" opacity="0.55"/>
+                        <ellipse cx="68" cy="92" rx="4" ry="3" fill="#FCA5A5" opacity="0.55"/>
+                        <circle cx="38" cy="80" r="4.5" fill="#0F172A"/>
+                        <circle cx="62" cy="80" r="4.5" fill="#0F172A"/>
+                        <circle cx="36.5" cy="78" r="1.5" fill="white"/>
+                        <circle cx="60.5" cy="78" r="1.5" fill="white"/>
+                        <path d="M38 95 Q50 106 62 95" stroke="#0F172A" stroke-width="3" stroke-linecap="round" fill="none"/>
+                    </svg>
+                </div>
+                <div class="project-info">
+                    <span class="project-tag">Now live</span>
+                    <h3>Hydrio</h3>
+                    <p>A smart water tracker with a friendly mascot. Stay hydrated, build the habit, and feel a little more cared for every day.</p>
+                    <div class="project-meta">
+                        <span>Android</span>
+                        <span class="dot"></span>
+                        <span>Free · Premium</span>
+                        <span class="dot"></span>
+                        <span>EN · PT · ES</span>
+                    </div>
+                    <div class="project-actions">
+                        <a class="btn btn-primary" href="https://play.google.com/store/apps/details?id=com.hydrio.app" target="_blank" rel="noopener">
+                            Get on Play Store <span class="arrow">→</span>
+                        </a>
+                        <a class="btn btn-secondary" href="https://hydrio-smart.web.app/" target="_blank" rel="noopener">Visit site</a>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section id="about">
+            <div class="section-label reveal">About</div>
+            <div class="glass-strong about-card reveal">
+                <p>Lumedev is a one-person studio based in Brazil. We focus on small, polished apps that solve a single problem really well — the kind of tools you keep on your home screen.</p>
+                <p>No dark patterns, no manipulative monetization, no shady analytics. Just useful, considered software we'd want to use ourselves.</p>
+                <p>Currently building <strong>Hydrio</strong>. More cozy things on the way.</p>
+                <div class="signature">Crafted slowly, in São Paulo.</div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <div class="section-label reveal">Contact</div>
+            <div class="contact-stack">
+                <div class="glass contact-row reveal">
+                    <div class="left">
+                        <span class="icon" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+                        </span>
+                        <span>
+                            <span class="label">Email</span>
+                            <span class="value">lumedev.co@gmail.com</span>
+                        </span>
+                    </div>
+                    <a href="mailto:lumedev.co@gmail.com">Send <span class="arrow">→</span></a>
+                </div>
+                <div class="glass contact-row reveal">
+                    <div class="left">
+                        <span class="icon" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-6 0v4"/><rect x="3" y="9" width="18" height="12" rx="2"/></svg>
+                        </span>
+                        <span>
+                            <span class="label">Press &amp; partnerships</span>
+                            <span class="value">Talk to us about Lumedev or Hydrio</span>
+                        </span>
+                    </div>
+                    <a href="mailto:lumedev.co@gmail.com?subject=Press%20%2F%20partnership%20inquiry">Reach out <span class="arrow">→</span></a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="foot-mark">
+            <span class="logo-mark" aria-hidden="true">L</span>
+            <span>Lumedev</span>
+        </div>
+        <p class="fine">© <span id="year">2026</span> Lumedev. Made with care in Brazil.</p>
+    </footer>
+
+    <script>
+        // Year
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Scroll-reveal
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach((e) => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('in');
+                    io.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        document.querySelectorAll('.reveal').forEach((el, i) => {
+            el.style.transitionDelay = (i % 4) * 60 + 'ms';
+            io.observe(el);
+        });
+    </script>
+</body>
+</html>

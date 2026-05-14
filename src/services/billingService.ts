@@ -234,8 +234,11 @@ export async function purchase(key: ProductKey): Promise<boolean> {
     const result = await storeRef.order(offer);
     if (result?.isError) {
       const msg = (result.message || '').toLowerCase();
-      // Silently ignore user cancellation
+      // User cancelled — must still notify so UI loading state resets.
+      // useBilling treats messages containing "cancel" as non-error (no toast),
+      // but uses the callback to flip loading=false.
       if (msg.includes('cancel') || msg.includes('user') || result.code === 1) {
+        callbacks?.onPurchaseError('Purchase cancelled');
         return false;
       }
       callbacks?.onPurchaseError(result.message || 'Purchase failed. Please try again.');
@@ -244,8 +247,8 @@ export async function purchase(key: ProductKey): Promise<boolean> {
     return true;
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    // Silently ignore user cancellation
     if (message.toLowerCase().includes('cancel')) {
+      callbacks?.onPurchaseError('Purchase cancelled');
       return false;
     }
     callbacks?.onPurchaseError(`Purchase error: ${message}`);

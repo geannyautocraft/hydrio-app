@@ -1,7 +1,7 @@
 {
   "name": "hydrio",
   "private": true,
-  "version": "0.1.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor-firebase/analytics": "^8.2.0",
+    "@capacitor-firebase/authentication": "^8.2.0",
+    "@capacitor-firebase/crashlytics": "^8.2.0",
     "@capacitor/android": "^8.3.0",
     "@capacitor/cli": "^8.3.0",
     "@capacitor/core": "^8.3.0",
@@ -17,6 +20,7 @@
     "@capacitor/local-notifications": "^8.0.2",
     "@capacitor/share": "^8.0.1",
     "cordova-plugin-purchase": "^13.13.1",
+    "firebase": "^12.13.0",
     "i18next": "^25.8.18",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -26,6 +30,7 @@
     "zustand": "^5.0.0"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@eslint/js": "^9.39.1",
     "@tailwindcss/vite": "^4.1.0",
     "@types/node": "^24.10.1",

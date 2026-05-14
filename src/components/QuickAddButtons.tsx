@@ -1,6 +1,19 @@
 import { useTranslation } from 'react-i18next';
 import { useHydrationStore } from '../store/useHydrationStore';
 import { trackEvent } from '../services/analyticsService';
+import { BottleIcon } from './BottleIcon';
+
+function getBottleSize(amount: number): 'sm' | 'md' | 'lg' {
+  if (amount <= 150) return 'sm';
+  if (amount <= 350) return 'md';
+  return 'lg';
+}
+
+function getFillLevel(amount: number): number {
+  if (amount <= 150) return 0.5;
+  if (amount <= 350) return 0.7;
+  return 0.85;
+}
 
 export function QuickAddButtons() {
   const { t } = useTranslation();
@@ -18,14 +31,22 @@ export function QuickAddButtons() {
   };
 
   return (
-    <div className="flex gap-2">
+    <div className="flex items-end justify-around gap-2 rounded-2xl bg-gradient-to-br from-sky-100/60 to-blue-100/60 p-4 backdrop-blur-sm dark:from-sky-900/30 dark:to-blue-900/30">
       {presets.map((amount) => (
         <button
           key={amount}
           onClick={() => handleAdd(amount)}
-          className="flex-1 rounded-xl bg-blue-500/80 backdrop-blur-sm py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:bg-blue-500 hover:shadow-xl active:scale-95 dark:bg-blue-600/80 dark:hover:bg-blue-500"
+          className="group flex flex-1 flex-col items-center gap-1.5 rounded-xl px-2 py-2 transition-transform active:scale-90"
+          aria-label={`${t('input.add')} ${amount} ${t('onboarding.ml')}`}
         >
-          +{amount} {t('onboarding.ml')}
+          <BottleIcon
+            size={getBottleSize(amount)}
+            fillLevel={getFillLevel(amount)}
+            className="drop-shadow-md transition-transform group-hover:scale-105 group-active:scale-95"
+          />
+          <span className="text-sm font-semibold text-blue-700 dark:text-blue-200">
+            {amount}{' '}<span className="text-xs font-medium text-blue-500/80 dark:text-blue-300/80">{t('onboarding.ml')}</span>
+          </span>
         </button>
       ))}
     </div>

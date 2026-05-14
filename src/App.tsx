@@ -1,47 +1,62 @@
 import { useState, useEffect } from 'react';
 import { Header } from './components/Header';
-import { SettingsScreen } from './components/SettingsScreen';
-import { HydrationProgress } from './components/HydrationProgress';
-import { HydrationInsights } from './components/HydrationInsights';
-import { HydrationStatusCard } from './components/HydrationStatusCard';
-import { InsightsPanel } from './components/InsightsPanel';
-import { QuickAddButtons } from './components/QuickAddButtons';
-import { CustomWaterInput } from './components/CustomWaterInput';
-import { DailyLogList } from './components/DailyLogList';
-import { HydrationHistory } from './components/HydrationHistory';
-import { HydrationStats } from './components/HydrationStats';
-import { WeeklyChart } from './components/WeeklyChart';
-import { HydrationHeatmap } from './components/HydrationHeatmap';
-import { AchievementsSection } from './components/AchievementsSection';
 import { Onboarding } from './components/Onboarding';
-import { ExtendedHistory } from './components/ExtendedHistory';
-import { AdvancedCharts } from './components/AdvancedCharts';
-import { ExportData } from './components/ExportData';
-import { CoachCard } from './components/CoachCard';
-import { AdvancedInsights } from './components/AdvancedInsights';
-import { InstallPrompt } from './components/InstallPrompt';
-import { WeeklyChallenge, EndOfDaySummary, ConsistencyMessage } from './components/RetentionCards';
+import { BottomTabBar, type TabKey } from './components/BottomTabBar';
+import { TodayScreen } from './components/screens/TodayScreen';
+import { HistoryScreen } from './components/screens/HistoryScreen';
+import { InsightsScreen } from './components/screens/InsightsScreen';
+import { SettingsScreen } from './components/SettingsScreen';
 import { useMidnightReset } from './hooks/useMidnightReset';
 import { useNotifications } from './hooks/useNotifications';
 import { useBilling } from './hooks/useBilling';
+import { useAuth } from './hooks/useAuth';
+import { useFirestoreSync } from './hooks/useFirestoreSync';
+import { usePremiumSync } from './hooks/usePremiumSync';
 import { useThemeStore } from './store/useThemeStore';
+import { useTextSizeStore } from './store/useTextSizeStore';
+import { usePremium } from './hooks/usePremium';
+import { setAnalyticsUser, trackScreenView } from './services/analyticsService';
+import { installGlobalErrorHandlers, setCrashUserId } from './services/crashService';
 
 const ONBOARDING_KEY = 'hydrio-onboarding-complete';
 
 export default function App() {
-  const [showSettings, setShowSettings] = useState(false);
+  const [tab, setTab] = useState<TabKey>('today');
   const [showOnboarding, setShowOnboarding] = useState(
     () => !localStorage.getItem(ONBOARDING_KEY)
   );
 
   useMidnightReset();
   useNotifications();
-  useBilling(); // Auto-restore purchases on startup
+  useBilling();
+  const { user } = useAuth();
+  const sync = useFirestoreSync(user?.uid ?? null);
+  usePremiumSync(user?.uid ?? null);
+  const { isPremium } = usePremium();
 
-  // Initialize dark mode class on mount
   useEffect(() => {
+    if (import.meta.env.DEV && user) {
+      console.log('[auth] signed in as', user.uid, user.isAnonymous ? '(anonymous)' : '');
+    }
+    if (user) {
+      void setAnalyticsUser(user.uid, {
+        is_anonymous: user.isAnonymous ? 'true' : 'false',
+        is_premium: isPremium ? 'true' : 'false',
+      });
+      void setCrashUserId(user.uid);
+    }
+  }, [user, isPremium]);
+
+  useEffect(() => {
+    trackScreenView(tab);
+  }, [tab]);
+
+  useEffect(() => {
+    installGlobalErrorHandlers();
     const dark = useThemeStore.getState().dark;
     document.documentElement.classList.toggle('dark', dark);
+    const size = useTextSizeStore.getState().size;
+    document.documentElement.classList.add(`text-size-${size}`);
   }, []);
 
   const handleOnboardingComplete = () => {
@@ -49,50 +64,37 @@ export default function App() {
     setShowOnboarding(false);
   };
 
+  if (sync.loading) {
+    return (
+      <div className="flex min-h-[100dvh] items-center justify-center">
+        <div className="text-center">
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-blue-500/30 border-t-blue-500" />
+          <p className="mt-4 text-sm text-gray-600 dark:text-gray-300">Hydrio</p>
+        </div>
+      </div>
+    );
+  }
+
   if (showOnboarding) {
     return <Onboarding onComplete={handleOnboardingComplete} />;
   }
 
+  const renderTab = () => {
+    switch (tab) {
+      case 'today': return <TodayScreen />;
+      case 'history': return <HistoryScreen />;
+      case 'insights': return <InsightsScreen />;
+      case 'settings': return <SettingsScreen />;
+    }
+  };
+
   return (
-    <div className="mx-auto max-w-md px-4 pb-10">
-      <Header
-        onToggleSettings={() => setShowSettings((s) => !s)}
-        settingsOpen={showSettings}
-      />
-
-      {showSettings && (
-        <div className="mb-4">
-          <SettingsScreen onClose={() => setShowSettings(false)} />
-        </div>
-      )}
-
-      <HydrationProgress />
-
-      <div className="mt-2 space-y-3">
-        <HydrationStatusCard />
-        <ConsistencyMessage />
-        <CoachCard />
-        <HydrationInsights />
-        <QuickAddButtons />
-        <CustomWaterInput />
+    <>
+      <div className="mx-auto max-w-md px-4 pb-24">
+        <Header />
+        {renderTab()}
       </div>
-
-      <div className="mt-6 space-y-4">
-        <InstallPrompt />
-        <EndOfDaySummary />
-        <WeeklyChallenge />
-        <DailyLogList />
-        <WeeklyChart />
-        <AdvancedCharts />
-        <HydrationHeatmap />
-        <AchievementsSection />
-        <HydrationHistory />
-        <ExtendedHistory />
-        <AdvancedInsights />
-        <ExportData />
-        <InsightsPanel />
-        <HydrationStats />
-      </div>
-    </div>
+      <BottomTabBar active={tab} onChange={setTab} />
+    </>
   );
 }

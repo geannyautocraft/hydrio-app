@@ -16,19 +16,21 @@ export function AchievementsSection() {
         {achievements.map((achievement) => (
           <div
             key={achievement.id}
-            className={`rounded-lg border px-3 py-2.5 transition-colors ${
+            className={`rounded-xl px-3 py-2.5 transition-all ${
               achievement.unlocked
-                ? 'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20'
-                : 'border-gray-100 bg-gray-50 opacity-50 dark:border-gray-700 dark:bg-gray-800'
+                ? 'glass-inner ring-1 ring-blue-300/40 dark:ring-blue-500/30'
+                : 'glass-inner opacity-50'
             }`}
           >
             <div className="flex items-center gap-2">
-              <span className="text-lg leading-none">{achievement.icon}</span>
+              <span className={`text-lg leading-none ${achievement.unlocked ? '' : 'grayscale'}`}>
+                {achievement.icon}
+              </span>
               <div className="min-w-0 flex-1">
-                <p className={`text-xs font-semibold truncate ${achievement.unlocked ? 'text-gray-800 dark:text-white' : 'text-gray-500 dark:text-gray-500'}`}>
+                <p className={`truncate text-xs font-semibold ${achievement.unlocked ? 'text-gray-800 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
                   {t(`achievements.${achievement.id}`)}
                 </p>
-                <p className={`text-[10px] truncate ${achievement.unlocked ? 'text-gray-500 dark:text-gray-400' : 'text-gray-400 dark:text-gray-600'}`}>
+                <p className="truncate text-[10px] text-gray-500 dark:text-gray-400">
                   {t(`achievements.${achievement.id}_desc`)}
                 </p>
               </div>

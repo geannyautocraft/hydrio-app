@@ -25,18 +25,18 @@ export function WeeklyChart() {
   }, [records, goalMl, locale]);
 
   return (
-    <div className="rounded-xl bg-white dark:bg-gray-800 p-4 shadow-sm">
-      <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">{t('chart.weeklyOverview')}</h2>
+    <div className="rounded-2xl glass p-4 shadow-lg shadow-blue-900/5">
+      <h2 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">{t('chart.weeklyOverview')}</h2>
       <div className="h-48">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 5, right: 5, bottom: 5, left: -15 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-            <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} tickFormatter={(v: number) => (v >= 1000 ? `${(v / 1000).toFixed(1)}L` : `${v}`)} />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(148, 163, 184, 0.25)" />
+            <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={(v: number) => (v >= 1000 ? `${(v / 1000).toFixed(1)}L` : `${v}`)} />
             <ReferenceLine y={goalMl} stroke="#f59e0b" strokeDasharray="4 4" strokeWidth={1.5} label={{ value: t('chart.goal'), position: 'right', fontSize: 10, fill: '#f59e0b' }} />
-            <Bar dataKey="total" radius={[4, 4, 0, 0]} maxBarSize={32}>
+            <Bar dataKey="total" radius={[6, 6, 0, 0]} maxBarSize={32}>
               {data.map((entry, index) => (
-                <Cell key={index} fill={entry.reached ? '#22c55e' : '#3b82f6'} fillOpacity={entry.total === 0 ? 0.2 : 0.85} />
+                <Cell key={index} fill={entry.reached ? '#22c55e' : '#3b82f6'} fillOpacity={entry.total === 0 ? 0.2 : 0.9} />
               ))}
             </Bar>
           </BarChart>

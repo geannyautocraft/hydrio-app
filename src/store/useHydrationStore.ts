@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import type { DayRecord, WaterEntry, UserProfile, NotificationSettings, ActivityLevel } from '../types';
 import {
   MAX_SINGLE_ENTRY_ML,
@@ -50,8 +49,7 @@ function calcRecommendedGoal(weightKg: number | null, activityLevel: ActivityLev
 }
 
 export const useHydrationStore = create<HydrationState & HydrationActions>()(
-  persist(
-    (set) => ({
+  (set) => ({
       goalMl: DEFAULT_GOAL_ML,
       records: {},
       quickPresets: DEFAULT_PRESETS,
@@ -196,42 +194,7 @@ export const useHydrationStore = create<HydrationState & HydrationActions>()(
         set((state) => ({
           notifications: { ...state.notifications, ...settings },
         })),
-    }),
-    {
-      name: 'hydrio-storage',
-      version: 3,
-      migrate: (persisted: unknown, version: number) => {
-        const state = persisted as HydrationState;
-        if (version < 2) {
-          return {
-            ...state,
-            userProfile: {
-              weightKg: null,
-              recommendedGoal: state.goalMl ?? DEFAULT_GOAL_ML,
-              customGoal: null,
-              activityLevel: 'moderate' as ActivityLevel,
-              weatherAdjust: false,
-            },
-            notifications: state.notifications ?? {
-              enabled: false,
-              intervalMinutes: DEFAULT_REMINDER_INTERVAL,
-            },
-          };
-        }
-        if (version < 3) {
-          return {
-            ...state,
-            userProfile: {
-              ...state.userProfile,
-              activityLevel: state.userProfile?.activityLevel ?? 'moderate',
-              weatherAdjust: state.userProfile?.weatherAdjust ?? false,
-            },
-          };
-        }
-        return state;
-      },
-    }
-  )
+    })
 );
 
 export function useTodayRecord(): DayRecord {

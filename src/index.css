@@ -5,7 +5,12 @@
 html {
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
+  font-size: 17px;
 }
+
+html.text-size-normal { font-size: 17px; }
+html.text-size-large { font-size: 19px; }
+html.text-size-xlarge { font-size: 21px; }
 
 body {
   min-height: 100dvh;
@@ -37,11 +42,11 @@ input[type="number"] {
 }
 
 input, select, textarea {
-  font-size: 16px;
+  font-size: max(1rem, 16px);
 }
 
 .progress-ring {
-  filter: drop-shadow(0 0 6px currentColor);
+  /* No harsh glow — keep it clean and cozy. */
 }
 
 * {

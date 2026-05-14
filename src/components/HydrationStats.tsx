@@ -25,9 +25,9 @@ export function HydrationStats() {
 
 function StatItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-gray-50 px-3 py-2.5 text-center dark:bg-gray-700/50">
+    <div className="rounded-xl glass-inner px-3 py-3 text-center">
       <p className="text-sm font-semibold text-gray-800 dark:text-white">{value}</p>
-      <p className="mt-0.5 text-xs text-gray-500">{label}</p>
+      <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{label}</p>
     </div>
   );
 }

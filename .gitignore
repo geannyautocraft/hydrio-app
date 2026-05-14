@@ -21,3 +21,10 @@ Thumbs.db
 
 # Debug
 npm-debug.log*
+
+# Firebase
+.firebase/
+*.log
+
+# Source asset PNGs (regenerated from SVGs via scripts/build-source-assets.mjs)
+resources/*.png

@@ -93,7 +93,8 @@ export type AnalyticsEvent =
   | 'goal_reached'
   | 'premium_prompt_opened'
   | 'premium_upgrade_clicked'
-  | 'coach_suggestion_shown';
+  | 'coach_suggestion_shown'
+  | 'feedback_sent';
 
 // Profile types
 export interface HydrationProfile {

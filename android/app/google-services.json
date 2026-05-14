@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "231744510793",
+    "project_id": "hydrio-smart",
+    "storage_bucket": "hydrio-smart.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:231744510793:android:d6de604ee52d8d77805898",
+        "android_client_info": {
+          "package_name": "com.hydrio.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "231744510793-7aitcuco0q7j8p1eag449l2iaoc5adl6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hydrio.app",
+            "certificate_hash": "17d68294a17c03fd8ae0bda4f4b92aed262c3f0f"
+          }
+        },
+        {
+          "client_id": "231744510793-umko8g0i24savip774q9b2vr02jkbklf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hydrio.app",
+            "certificate_hash": "42766d80e2afe3f81843c6be874b354db845fb9d"
+          }
+        },
+        {
+          "client_id": "231744510793-cfivij5b5gbf7n6dfbngd8ms054eurgi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAE2VGLeuDSiO-PZsjnrk16Ue9dfKUx4QI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "231744510793-cfivij5b5gbf7n6dfbngd8ms054eurgi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
