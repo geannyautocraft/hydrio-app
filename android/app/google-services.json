@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "231744510793-gldfs1jt3mn15hlmlg01da4up3chpltu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hydrio.app",
+            "certificate_hash": "45a3f33fe8b5e1d304193d4090a8db7c6a40e0b9"
+          }
+        },
+        {
           "client_id": "231744510793-umko8g0i24savip774q9b2vr02jkbklf.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
