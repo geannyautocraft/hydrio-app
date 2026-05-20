@@ -1,23 +1,36 @@
 <svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#BFDBFE"/>
-      <stop offset="50%" stop-color="#BAE6FD"/>
-      <stop offset="100%" stop-color="#C7D2FE"/>
-    </linearGradient>
+    <radialGradient id="bg-grad" cx="50%" cy="35%" r="80%">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="55%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </radialGradient>
     <linearGradient id="droplet-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#7DD3FC"/>
-      <stop offset="55%" stop-color="#60A5FA"/>
-      <stop offset="100%" stop-color="#2563EB"/>
+      <stop offset="0%" stop-color="#67E8F9"/>
+      <stop offset="35%" stop-color="#38BDF8"/>
+      <stop offset="70%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#1D4ED8"/>
     </linearGradient>
+    <radialGradient id="droplet-glow-bg" cx="50%" cy="55%" r="55%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.45"/>
+      <stop offset="60%" stop-color="#38BDF8" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#38BDF8" stop-opacity="0"/>
+    </radialGradient>
   </defs>
 
   <rect width="1024" height="1024" fill="url(#bg-grad)"/>
 
-  <!-- Droplet centered, larger for full-icon version -->
+  <!-- Soft glow behind droplet -->
+  <ellipse cx="512" cy="560" rx="360" ry="380" fill="url(#droplet-glow-bg)"/>
+
+  <!-- Droplet, slightly larger for full icon -->
   <path d="M512 180 C 360 360, 240 540, 240 700 C 240 850, 360 920, 512 920 C 664 920, 784 850, 784 700 C 784 540, 664 360, 512 180 Z"
         fill="url(#droplet-grad)"/>
 
-  <ellipse cx="410" cy="540" rx="44" ry="100" fill="white" opacity="0.55"/>
-  <ellipse cx="430" cy="380" rx="22" ry="46" fill="white" opacity="0.7"/>
+  <!-- Highlight on top-left -->
+  <ellipse cx="408" cy="500" rx="60" ry="130" fill="white" opacity="0.5"/>
+  <ellipse cx="428" cy="350" rx="28" ry="52" fill="white" opacity="0.75"/>
+
+  <!-- Subtle bottom-right reflection -->
+  <ellipse cx="620" cy="780" rx="48" ry="26" fill="white" opacity="0.18" transform="rotate(-20 620 780)"/>
 </svg>
