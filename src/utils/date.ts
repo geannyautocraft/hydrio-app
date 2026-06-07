@@ -13,9 +13,18 @@ export function formatTime(isoString: string): string {
   return `${hours}:${minutes}`;
 }
 
-export function formatDate(dateKey: string): string {
+export function getDisplayLocale(locale?: string): string {
+  const language = locale?.split('-')[0];
+  if (language === 'pt') return 'pt-BR';
+  if (language === 'es') return 'es-ES';
+  if (language === 'en') return 'en-US';
+  if (locale) return locale;
+  return typeof navigator !== 'undefined' ? navigator.language : 'en-US';
+}
+
+export function formatDate(dateKey: string, locale?: string): string {
   const date = new Date(dateKey + 'T00:00:00');
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString(getDisplayLocale(locale), {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
@@ -29,7 +38,7 @@ export function getMsUntilMidnight(): number {
   return midnight.getTime() - now.getTime();
 }
 
-export function getDateLabel(dateKey: string): string {
+export function getDateLabel(dateKey: string, locale?: string): string {
   const today = getTodayKey();
   if (dateKey === today) return 'Today';
 
@@ -38,7 +47,7 @@ export function getDateLabel(dateKey: string): string {
   const yesterdayKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
   if (dateKey === yesterdayKey) return 'Yesterday';
 
-  return formatDate(dateKey);
+  return formatDate(dateKey, locale);
 }
 
 export function getRecentDateKeys(count: number): string[] {

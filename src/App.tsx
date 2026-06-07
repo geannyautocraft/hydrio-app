@@ -15,6 +15,7 @@ import { usePremiumSync } from './hooks/usePremiumSync';
 import { useThemeStore } from './store/useThemeStore';
 import { useTextSizeStore } from './store/useTextSizeStore';
 import { usePremium } from './hooks/usePremium';
+import { useHydrioWidget } from './hooks/useHydrioWidget';
 import { setAnalyticsUser, trackScreenView } from './services/analyticsService';
 import { installGlobalErrorHandlers, setCrashUserId } from './services/crashService';
 
@@ -33,6 +34,7 @@ export default function App() {
   const sync = useFirestoreSync(user?.uid ?? null);
   usePremiumSync(user?.uid ?? null);
   const { isPremium } = usePremium();
+  useHydrioWidget(!sync.loading);
 
   useEffect(() => {
     if (import.meta.env.DEV && user) {

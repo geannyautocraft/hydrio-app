@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHydrationStore, useTodayRecord } from '../store/useHydrationStore';
 import { useHydrationCoach } from '../hooks/useHydrationCoach';
@@ -6,6 +6,11 @@ import { usePremium } from '../hooks/usePremium';
 import { Mascot, type MascotMood } from './Mascot';
 import { UpgradeModal } from './UpgradeModal';
 import { trackEvent } from '../services/analyticsService';
+import {
+  getCachedTodayHealthSummary,
+  HEALTH_TODAY_UPDATED_EVENT,
+  type HealthTodaySummary,
+} from '../services/healthService';
 
 type HydrationStatus = 'under' | 'reached' | 'over' | 'excess';
 
@@ -41,6 +46,8 @@ const COACH_TYPE_TO_MOOD: Record<string, MascotMood> = {
   drink_now: 'happy',
   prediction: 'thoughtful',
   completed: 'excited',
+  rest: 'sleepy',
+  activity: 'excited',
 };
 
 const COACH_BUBBLE: Record<string, string> = {
@@ -49,6 +56,8 @@ const COACH_BUBBLE: Record<string, string> = {
   drink_now: 'bg-sky-100/90 text-sky-900 dark:bg-sky-900/40 dark:text-sky-100',
   prediction: 'bg-purple-100/90 text-purple-900 dark:bg-purple-900/40 dark:text-purple-100',
   completed: 'bg-green-100/90 text-green-900 dark:bg-green-900/40 dark:text-green-100',
+  rest: 'bg-slate-100/90 text-slate-800 dark:bg-slate-800/60 dark:text-slate-100',
+  activity: 'bg-lime-100/90 text-lime-950 dark:bg-lime-900/40 dark:text-lime-100',
 };
 
 function ProgressCircle({ status, currentMl, goalMl }: { status: HydrationStatus; currentMl: number; goalMl: number }) {
@@ -101,10 +110,10 @@ function ProgressCircle({ status, currentMl, goalMl }: { status: HydrationStatus
   );
 }
 
-function CoachBubble({ message, mood, color, tailColor }: { message: string; mood: MascotMood; color: string; tailColor: string }) {
+function CoachBubble({ message, mood, color, tailColor, pulse }: { message: string; mood: MascotMood; color: string; tailColor: string; pulse: boolean }) {
   return (
     <div className="relative flex min-w-0 flex-col items-center">
-      <Mascot mood={mood} size={80} />
+      <Mascot mood={mood} size={80} className={pulse ? 'animate-[bounce_1.2s_ease-in-out_1]' : ''} />
       <div className={`relative mt-1 w-full rounded-2xl px-3 py-2 text-xs font-medium leading-snug ${color}`}>
         <span aria-hidden className={`absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 ${tailColor}`} />
         {message}
@@ -117,7 +126,11 @@ export function HeroDashboard() {
   const { t } = useTranslation();
   const goalMl = useHydrationStore((s) => s.goalMl);
   const todayRecord = useTodayRecord();
+  const [healthSummary, setHealthSummary] = useState<HealthTodaySummary | null>(() => getCachedTodayHealthSummary());
   const currentMl = todayRecord.totalMl;
+  const activityExtraMl = healthSummary?.extraWaterMl ?? 0;
+  const hasActivityExtra = activityExtraMl > 0;
+  const dayTargetMl = goalMl + activityExtraMl;
   const status = getStatus(currentMl, goalMl);
   const palette = STATUS_PALETTE[status];
   const { key, params } = getFeedbackKey(currentMl, goalMl);
@@ -136,6 +149,15 @@ export function HeroDashboard() {
   const showCoach = primaryMessage !== undefined;
   const blurredCoach = showCoach && !isPremium;
 
+  useEffect(() => {
+    const handleHealthUpdate = (event: Event) => {
+      setHealthSummary((event as CustomEvent<HealthTodaySummary>).detail);
+    };
+
+    window.addEventListener(HEALTH_TODAY_UPDATED_EVENT, handleHealthUpdate);
+    return () => window.removeEventListener(HEALTH_TODAY_UPDATED_EVENT, handleHealthUpdate);
+  }, []);
+
   return (
     <div className="py-4">
       <div className="flex items-center justify-center gap-3">
@@ -149,6 +171,7 @@ export function HeroDashboard() {
                 mood={mood}
                 color={bubbleColor}
                 tailColor={bubbleBg}
+                pulse={primaryMessage.type === 'completed' || primaryMessage.type === 'on_track' || primaryMessage.type === 'activity'}
               />
             </div>
             {blurredCoach && (
@@ -166,6 +189,31 @@ export function HeroDashboard() {
       <p className={`mt-4 text-center text-sm font-medium ${palette.text}`}>
         {feedback}
       </p>
+
+      {hasActivityExtra && (
+        <div className="mx-auto mt-3 w-full max-w-xs rounded-xl bg-lime-500/10 px-3 py-2 dark:bg-lime-400/10">
+          <div className="mb-2 flex items-center justify-center gap-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-lime-500" />
+            <span className="text-[11px] font-bold text-lime-800 dark:text-lime-200">
+              {t('health.activityConnected')}
+            </span>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div>
+              <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400">{t('health.baseGoal')}</p>
+              <p className="text-xs font-bold text-gray-800 dark:text-gray-100">{goalMl.toLocaleString()} ml</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400">{t('health.activityExtra')}</p>
+              <p className="text-xs font-bold text-lime-700 dark:text-lime-200">+{activityExtraMl.toLocaleString()} ml</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400">{t('health.dayTarget')}</p>
+              <p className="text-xs font-bold text-gray-800 dark:text-gray-100">{dayTargetMl.toLocaleString()} ml</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} />}
     </div>

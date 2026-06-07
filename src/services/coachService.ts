@@ -4,8 +4,14 @@ export interface CoachSuggestion {
   message: string;
   messageKey: string;
   messageParams?: Record<string, string | number>;
-  type: 'behind' | 'on_track' | 'drink_now' | 'prediction' | 'completed';
+  type: 'behind' | 'on_track' | 'drink_now' | 'prediction' | 'completed' | 'rest' | 'activity';
   priority: number;
+}
+
+interface ActivityHydrationInput {
+  activeCaloriesKcal: number;
+  extraWaterMl: number;
+  exerciseCount: number;
 }
 
 interface CoachInput {
@@ -13,15 +19,20 @@ interface CoachInput {
   goalMl: number;
   weightKg: number | null;
   entries: DayRecord['entries'];
+  activity?: ActivityHydrationInput | null;
 }
 
 export function generateCoachSuggestions(input: CoachInput): CoachSuggestion[] {
-  const { currentMl, goalMl, entries } = input;
+  const { currentMl, goalMl, entries, activity } = input;
   const suggestions: CoachSuggestion[] = [];
   const now = new Date();
   const currentHour = now.getHours() + now.getMinutes() / 60;
   const ratio = goalMl > 0 ? currentMl / goalMl : 0;
-  const remaining = goalMl - currentMl;
+  const remaining = Math.max(0, goalMl - currentMl);
+  const lastEntry = entries[entries.length - 1];
+  const minutesSinceLastLog = lastEntry
+    ? (now.getTime() - new Date(lastEntry.timestamp).getTime()) / (1000 * 60)
+    : null;
 
   if (ratio >= 1) {
     suggestions.push({
@@ -37,10 +48,74 @@ export function generateCoachSuggestions(input: CoachInput): CoachSuggestion[] {
   const activeStart = 7;
   const activeEnd = 23;
   const activeWindow = activeEnd - activeStart;
+
+  if (currentHour < activeStart || currentHour >= activeEnd) {
+    suggestions.push({
+      message: '',
+      messageKey: ratio >= 1 ? 'coach.restCompleted' : 'coach.restMode',
+      type: 'rest',
+      priority: 1,
+    });
+    return suggestions;
+  }
+
+  if (minutesSinceLastLog !== null && minutesSinceLastLog < 15 && ratio < 1) {
+    suggestions.push({
+      message: '',
+      messageKey: 'coach.recentSip',
+      type: 'on_track',
+      priority: 1,
+    });
+  }
+
+  if (activity && activity.extraWaterMl >= 100 && (activity.activeCaloriesKcal > 0 || activity.exerciseCount > 0)) {
+    const activityTarget = goalMl + activity.extraWaterMl;
+    const activityRemaining = Math.max(0, activityTarget - currentMl);
+    const suggestedActivityAmount = Math.min(
+      activity.extraWaterMl,
+      activityRemaining,
+      500
+    );
+    const roundedActivityAmount = Math.max(50, Math.round(suggestedActivityAmount / 50) * 50);
+
+    if (activityRemaining >= 100 && roundedActivityAmount >= 100) {
+      suggestions.push({
+        message: '',
+        messageKey: 'coach.activityHydration',
+        messageParams: {
+          amount: roundedActivityAmount,
+          calories: Math.round(activity.activeCaloriesKcal),
+        },
+        type: 'activity',
+        priority: 1,
+      });
+    }
+  }
+
+  if (entries.length === 0 && currentHour < activeStart + 2) {
+    suggestions.push({
+      message: '',
+      messageKey: 'coach.morningStart',
+      type: 'drink_now',
+      priority: 2,
+    });
+  }
+
   const elapsed = Math.max(0, Math.min(currentHour - activeStart, activeWindow));
   const expectedRatio = elapsed / activeWindow;
+  const expectedMl = goalMl * expectedRatio;
+  const scheduleDeficit = Math.max(0, expectedMl - currentMl);
+  const isBehindSchedule = ratio < expectedRatio * 0.7 && currentHour > activeStart;
+  let roundedAmount = 0;
 
-  if (ratio < expectedRatio * 0.7 && currentHour > activeStart) {
+  if (remaining > 0 && currentHour < activeEnd) {
+    const hoursLeft = activeEnd - currentHour;
+    const pacingAmount = remaining / Math.max(hoursLeft / 1.5, 1);
+    const recommendedNow = Math.min(isBehindSchedule ? scheduleDeficit : pacingAmount, remaining, 500);
+    roundedAmount = Math.min(remaining, Math.max(50, Math.round(recommendedNow / 50) * 50));
+  }
+
+  if (isBehindSchedule && roundedAmount < 50) {
     suggestions.push({
       message: '',
       messageKey: 'coach.behindSchedule',
@@ -53,16 +128,14 @@ export function generateCoachSuggestions(input: CoachInput): CoachSuggestion[] {
   if (remaining > 0 && currentHour < activeEnd) {
     const hoursLeft = activeEnd - currentHour;
     const mlPerHour = Math.round(remaining / hoursLeft);
-    const recommendedNow = Math.min(Math.round(remaining / Math.max(hoursLeft / 1.5, 1)), 500);
-    const roundedAmount = Math.round(recommendedNow / 50) * 50;
 
     if (roundedAmount >= 50) {
       suggestions.push({
         message: '',
-        messageKey: 'coach.drinkNow',
+        messageKey: isBehindSchedule ? 'coach.catchUpDrink' : 'coach.drinkNow',
         messageParams: { amount: roundedAmount },
         type: 'drink_now',
-        priority: 2,
+        priority: isBehindSchedule ? 1 : 2,
       });
     }
 

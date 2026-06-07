@@ -1,7 +1,13 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Hydrio</string>
     <string name="title_activity_main">Hydrio</string>
     <string name="package_name">com.hydrio.app</string>
     <string name="custom_url_scheme">com.hydrio.app</string>
+    <string name="hydrio_widget_full_name">Hydrio 4 x 2</string>
+    <string name="hydrio_widget_compact_name">Hydrio 3 x 1</string>
+    <string name="hydrio_widget_mini_name">Hydrio 2 x 1</string>
+    <string name="hydrio_widget_description">Resumo diario de hidratacao com botoes rapidos.</string>
+    <string name="hydrio_widget_compact_description">Resumo compacto de hidratacao com botoes rapidos.</string>
+    <string name="hydrio_widget_mini_description">Resumo minimo de hidratacao para a tela inicial.</string>
 </resources>

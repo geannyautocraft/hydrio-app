@@ -29,6 +29,7 @@ interface HydrationState {
 
 interface HydrationActions {
   addEntry: (amount: number) => void;
+  addExternalEntry: (amount: number, timestamp: string) => void;
   removeEntry: (entryId: string) => void;
   editEntry: (entryId: string, newAmount: number) => void;
   setGoal: (goalMl: number) => void;
@@ -63,6 +64,8 @@ export const useHydrationStore = create<HydrationState & HydrationActions>()(
       notifications: {
         enabled: false,
         intervalMinutes: DEFAULT_REMINDER_INTERVAL,
+        wakeTime: '07:00',
+        sleepTime: '23:00',
       },
 
       addEntry: (amount: number) => {
@@ -81,6 +84,31 @@ export const useHydrationStore = create<HydrationState & HydrationActions>()(
             records: {
               ...state.records,
               [today]: {
+                ...dayRecord,
+                entries: [...dayRecord.entries, entry],
+                totalMl: dayRecord.totalMl + amount,
+              },
+            },
+          };
+        });
+      },
+
+      addExternalEntry: (amount: number, timestamp: string) => {
+        if (amount <= 0 || amount > MAX_SINGLE_ENTRY_ML) return;
+
+        const date = timestamp.slice(0, 10) || getTodayKey();
+        const entry: WaterEntry = {
+          id: crypto.randomUUID(),
+          amount,
+          timestamp,
+        };
+
+        set((state) => {
+          const dayRecord = state.records[date] ?? createEmptyDayRecord(date);
+          return {
+            records: {
+              ...state.records,
+              [date]: {
                 ...dayRecord,
                 entries: [...dayRecord.entries, entry],
                 totalMl: dayRecord.totalMl + amount,

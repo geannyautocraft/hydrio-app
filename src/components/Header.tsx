@@ -5,15 +5,16 @@ import { DarkModeToggle } from './DarkModeToggle';
 import { PremiumBadge } from './PremiumBadge';
 
 export function Header() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const todayRecord = useTodayRecord();
   const goalMl = useHydrationStore((s) => s.goalMl);
   const currentMl = todayRecord.totalMl;
   const percentage = goalMl > 0 ? Math.round((currentMl / goalMl) * 100) : 0;
+  const locale = i18n.resolvedLanguage ?? i18n.language;
 
   const subtitle = currentMl === 0
-    ? formatDate(getTodayKey())
-    : t('dashboard.mlToday', { current: currentMl.toLocaleString(), percentage });
+    ? formatDate(getTodayKey(), locale)
+    : t('dashboard.mlToday', { current: currentMl.toLocaleString(locale), percentage });
 
   return (
     <header className="flex items-center justify-between pb-2 pt-4">

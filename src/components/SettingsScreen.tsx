@@ -5,9 +5,11 @@ import { SettingsIndex } from './settings/SettingsIndex';
 import { ProfileScreen } from './settings/ProfileScreen';
 import { GoalScreen } from './settings/GoalScreen';
 import { RemindersScreen } from './settings/RemindersScreen';
+import { ConnectionsScreen } from './settings/ConnectionsScreen';
 import { AppearanceScreen } from './settings/AppearanceScreen';
 import { LanguageScreen } from './settings/LanguageScreen';
 import { PremiumScreen } from './settings/PremiumScreen';
+import { RoadmapScreen } from './settings/RoadmapScreen';
 import { FeedbackScreen } from './settings/FeedbackScreen';
 import type { SettingsScreenKey } from './settings/types';
 
@@ -21,9 +23,11 @@ export function SettingsScreen() {
     profile: 'settings.indexProfile',
     goal: 'settings.indexGoal',
     reminders: 'settings.indexReminders',
+    connections: 'settings.indexConnections',
     appearance: 'settings.indexAppearance',
     language: 'settings.indexLanguage',
     premium: 'settings.indexPremium',
+    roadmap: 'settings.indexRoadmap',
     feedback: 'settings.indexFeedback',
   };
 
@@ -33,9 +37,11 @@ export function SettingsScreen() {
       case 'profile': return <ProfileScreen />;
       case 'goal': return <GoalScreen />;
       case 'reminders': return <RemindersScreen />;
+      case 'connections': return <ConnectionsScreen />;
       case 'appearance': return <AppearanceScreen />;
       case 'language': return <LanguageScreen />;
       case 'premium': return <PremiumScreen />;
+      case 'roadmap': return <RoadmapScreen />;
       case 'feedback': return <FeedbackScreen />;
       default: return <SettingsIndex onNavigate={setScreen} />;
     }

@@ -23,6 +23,44 @@ function getRandomKey(keys: string[]) {
 }
 
 const NOTIFICATION_CHANNEL_ID = 'hydrio-reminders';
+const DEFAULT_WAKE_TIME = '07:00';
+const DEFAULT_SLEEP_TIME = '23:00';
+
+function parseTimeToMinutes(value: string | undefined, fallback: string): number {
+  const source = value && /^\d{2}:\d{2}$/.test(value) ? value : fallback;
+  const [hours, minutes] = source.split(':').map(Number);
+  return hours * 60 + minutes;
+}
+
+function minutesSinceMidnight(date: Date): number {
+  return date.getHours() * 60 + date.getMinutes();
+}
+
+function isWithinAwakeWindow(date: Date, wakeTime: string, sleepTime: string): boolean {
+  const wake = parseTimeToMinutes(wakeTime, DEFAULT_WAKE_TIME);
+  const sleep = parseTimeToMinutes(sleepTime, DEFAULT_SLEEP_TIME);
+  const current = minutesSinceMidnight(date);
+
+  if (wake === sleep) return true;
+  if (wake < sleep) return current >= wake && current < sleep;
+  return current >= wake || current < sleep;
+}
+
+function nextAwakeStart(from: Date, wakeTime: string): Date {
+  const wake = parseTimeToMinutes(wakeTime, DEFAULT_WAKE_TIME);
+  const next = new Date(from);
+  next.setHours(Math.floor(wake / 60), wake % 60, 0, 0);
+  if (next <= from) {
+    next.setDate(next.getDate() + 1);
+  }
+  return next;
+}
+
+function nextReminderTime(from: Date, intervalMins: number, wakeTime: string, sleepTime: string): Date {
+  const candidate = new Date(from.getTime() + intervalMins * 60 * 1000);
+  if (isWithinAwakeWindow(candidate, wakeTime, sleepTime)) return candidate;
+  return nextAwakeStart(candidate, wakeTime);
+}
 
 async function ensureNativeChannel() {
   if (!Capacitor.isNativePlatform()) return;
@@ -42,7 +80,7 @@ async function ensureNativeChannel() {
 
 export function useNotifications() {
   const { t } = useTranslation();
-  const { enabled, intervalMinutes } = useHydrationStore((s) => s.notifications);
+  const { enabled, intervalMinutes, wakeTime, sleepTime } = useHydrationStore((s) => s.notifications);
   const setNotifications = useHydrationStore((s) => s.setNotifications);
   const goalMl = useHydrationStore((s) => s.goalMl);
   const todayRecord = useTodayRecord();
@@ -72,7 +110,11 @@ export function useNotifications() {
     return result === 'granted';
   }, [isNative]);
 
-  const scheduleNativeNotifications = useCallback(async (intervalMins: number) => {
+  const scheduleNativeNotifications = useCallback(async (
+    intervalMins: number,
+    awakeStart: string,
+    asleepAt: string
+  ) => {
     if (!isNative) return;
 
     // Cancel existing scheduled notifications
@@ -83,25 +125,27 @@ export function useNotifications() {
 
     await ensureNativeChannel();
 
-    // Schedule repeating notifications for the next 12 hours
     const notifications = [];
-    const now = Date.now();
-    const count = Math.floor((12 * 60) / intervalMins);
+    let nextTime = nextReminderTime(new Date(), intervalMins, awakeStart, asleepAt);
+    const horizon = Date.now() + 36 * 60 * 60 * 1000;
 
-    for (let i = 1; i <= count; i++) {
-      const keys = i <= count * 0.6 ? MESSAGE_KEYS : GENTLE_MESSAGE_KEYS;
+    for (let i = 1; i <= 40 && nextTime.getTime() <= horizon; i++) {
+      const keys = i <= 8 ? MESSAGE_KEYS : GENTLE_MESSAGE_KEYS;
       notifications.push({
         id: 1000 + i,
         title: 'Hydrio',
         body: tRef.current(getRandomKey(keys)),
-        schedule: { at: new Date(now + i * intervalMins * 60 * 1000) },
+        schedule: { at: nextTime },
         channelId: NOTIFICATION_CHANNEL_ID,
         smallIcon: 'ic_launcher',
         iconColor: '#3B82F6',
       });
+      nextTime = nextReminderTime(nextTime, intervalMins, awakeStart, asleepAt);
     }
 
-    await LocalNotifications.schedule({ notifications });
+    if (notifications.length > 0) {
+      await LocalNotifications.schedule({ notifications });
+    }
   }, [isNative]);
 
   const enable = useCallback(async () => {
@@ -109,11 +153,11 @@ export function useNotifications() {
     if (granted) {
       setNotifications({ enabled: true });
       if (isNative) {
-        await scheduleNativeNotifications(intervalMinutes);
+        await scheduleNativeNotifications(intervalMinutes, wakeTime, sleepTime);
       }
     }
     return granted;
-  }, [requestPermission, setNotifications, isNative, scheduleNativeNotifications, intervalMinutes]);
+  }, [requestPermission, setNotifications, isNative, scheduleNativeNotifications, intervalMinutes, wakeTime, sleepTime]);
 
   const disable = useCallback(async () => {
     setNotifications({ enabled: false });
@@ -130,10 +174,20 @@ export function useNotifications() {
     (minutes: number) => {
       setNotifications({ intervalMinutes: minutes });
       if (isNative && enabled) {
-        scheduleNativeNotifications(minutes);
+        scheduleNativeNotifications(minutes, wakeTime, sleepTime);
       }
     },
-    [setNotifications, isNative, enabled, scheduleNativeNotifications]
+    [setNotifications, isNative, enabled, scheduleNativeNotifications, wakeTime, sleepTime]
+  );
+
+  const setAwakeWindow = useCallback(
+    (nextWakeTime: string, nextSleepTime: string) => {
+      setNotifications({ wakeTime: nextWakeTime, sleepTime: nextSleepTime });
+      if (isNative && enabled) {
+        scheduleNativeNotifications(intervalMinutes, nextWakeTime, nextSleepTime);
+      }
+    },
+    [setNotifications, isNative, enabled, scheduleNativeNotifications, intervalMinutes]
   );
 
   const currentMl = todayRecord.totalMl;
@@ -151,6 +205,7 @@ export function useNotifications() {
 
     const sendNotification = () => {
       if (percentage >= 100) return;
+      if (!isWithinAwakeWindow(new Date(), wakeTime, sleepTime)) return;
 
       const now = Date.now();
       const entries = todayRecord.entries;
@@ -177,13 +232,13 @@ export function useNotifications() {
     intervalRef.current = setInterval(sendNotification, adjustedInterval * 60 * 1000);
 
     return clearTimer;
-  }, [isNative, enabled, intervalMinutes, clearTimer, percentage, todayRecord.entries]);
+  }, [isNative, enabled, intervalMinutes, clearTimer, percentage, todayRecord.entries, wakeTime, sleepTime]);
 
   // Native: reschedule when enabled or interval changes
   useEffect(() => {
     if (!isNative || !enabled) return;
-    scheduleNativeNotifications(intervalMinutes);
-  }, [isNative, enabled, intervalMinutes, scheduleNativeNotifications]);
+    scheduleNativeNotifications(intervalMinutes, wakeTime, sleepTime);
+  }, [isNative, enabled, intervalMinutes, scheduleNativeNotifications, wakeTime, sleepTime]);
 
   const checkSupported = () => {
     if (isNative) return true;
@@ -193,10 +248,13 @@ export function useNotifications() {
   return {
     enabled,
     intervalMinutes,
+    wakeTime,
+    sleepTime,
     supported: checkSupported(),
     permission: 'default' as NotificationPermission,
     enable,
     disable,
     setInterval: setInterval_,
+    setAwakeWindow,
   };
 }

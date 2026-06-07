@@ -19,7 +19,16 @@ export async function loadHydrationState(uid: string): Promise<SyncedHydrationSt
   if (!snap.exists()) return null;
   const data = snap.data();
   if (!data || typeof data !== 'object') return null;
-  return data as SyncedHydrationState;
+  const state = data as SyncedHydrationState;
+  const notifications = state.notifications ?? {};
+  return {
+    ...state,
+    notifications: {
+      ...notifications,
+      wakeTime: notifications.wakeTime ?? '07:00',
+      sleepTime: notifications.sleepTime ?? '23:00',
+    },
+  };
 }
 
 export async function saveHydrationState(uid: string, state: SyncedHydrationState): Promise<void> {

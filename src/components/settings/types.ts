@@ -4,7 +4,9 @@ export type SettingsScreenKey =
   | 'profile'
   | 'goal'
   | 'reminders'
+  | 'connections'
   | 'appearance'
   | 'language'
   | 'premium'
+  | 'roadmap'
   | 'feedback';

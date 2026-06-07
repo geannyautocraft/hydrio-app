@@ -9,6 +9,7 @@ const INTERVAL_OPTIONS = [
 ];
 
 const sectionClass = 'rounded-lg border border-gray-300/50 dark:border-gray-600/50 glass-inner p-3';
+const timeInputClass = 'w-full rounded-lg border border-gray-300/60 bg-white/60 px-3 py-2 text-sm font-semibold text-gray-800 outline-none transition-colors focus:border-blue-400 dark:border-gray-600/60 dark:bg-gray-800/60 dark:text-white dark:focus:border-blue-500';
 
 export function RemindersScreen() {
   const { t } = useTranslation();
@@ -43,27 +44,63 @@ export function RemindersScreen() {
       </div>
 
       {notifications.enabled && (
-        <div>
-          <p className="mb-1.5 text-sm font-semibold text-gray-800 dark:text-gray-200">
-            {t('settings.indexRemindersInterval')}
-          </p>
-          <div className="flex gap-1.5">
-            {INTERVAL_OPTIONS.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => notifications.setInterval(opt.value)}
-                className={`flex-1 rounded-full px-2.5 py-2 text-xs font-medium transition-colors ${
-                  notifications.intervalMinutes === opt.value
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-white/50 dark:bg-white/10 text-gray-700 dark:text-gray-300'
-                }`}
-              >
-                {t(opt.labelKey)}
-              </button>
-            ))}
+        <>
+          <div>
+            <p className="mb-1.5 text-sm font-semibold text-gray-800 dark:text-gray-200">
+              {t('settings.indexRemindersInterval')}
+            </p>
+            <div className="flex gap-1.5">
+              {INTERVAL_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => notifications.setInterval(opt.value)}
+                  className={`flex-1 rounded-full px-2.5 py-2 text-xs font-medium transition-colors ${
+                    notifications.intervalMinutes === opt.value
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-white/50 dark:bg-white/10 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  {t(opt.labelKey)}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+
+          <div className={sectionClass}>
+            <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+              {t('settings.reminderAwakeWindow')}
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-gray-500 dark:text-gray-400">
+              {t('settings.reminderAwakeWindowDesc')}
+            </p>
+
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <label className="min-w-0">
+                <span className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-300">
+                  {t('settings.wakeTime')}
+                </span>
+                <input
+                  type="time"
+                  value={notifications.wakeTime}
+                  onChange={(event) => notifications.setAwakeWindow(event.target.value, notifications.sleepTime)}
+                  className={timeInputClass}
+                />
+              </label>
+              <label className="min-w-0">
+                <span className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-300">
+                  {t('settings.sleepTime')}
+                </span>
+                <input
+                  type="time"
+                  value={notifications.sleepTime}
+                  onChange={(event) => notifications.setAwakeWindow(notifications.wakeTime, event.target.value)}
+                  className={timeInputClass}
+                />
+              </label>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

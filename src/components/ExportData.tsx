@@ -9,16 +9,22 @@ function ExportDataContent() {
   const records = useHydrationStore((s) => s.records);
   const goalMl = useHydrationStore((s) => s.goalMl);
   const [exported, setExported] = useState<string | null>(null);
+  const [exportPath, setExportPath] = useState<string | null>(null);
 
   const totalDays = Object.keys(records).length;
   const totalEntries = Object.values(records).reduce((sum, r) => sum + r.entries.length, 0);
 
   const handleExport = async (format: 'json' | 'csv') => {
     try {
-      if (format === 'json') await exportAsJSON(records, goalMl);
-      else await exportAsCSV(records, goalMl);
+      const result = format === 'json'
+        ? await exportAsJSON(records, goalMl)
+        : await exportAsCSV(records, goalMl);
       setExported(format.toUpperCase());
-      setTimeout(() => setExported(null), 2000);
+      setExportPath(result.path);
+      setTimeout(() => {
+        setExported(null);
+        setExportPath(null);
+      }, 3500);
     } catch {
       // Share cancelled by user — ignore
     }
@@ -40,7 +46,7 @@ function ExportDataContent() {
       </div>
       {exported && (
         <p className="mt-2 text-center text-xs font-medium text-green-600 dark:text-green-400">
-          {t('export.success', { format: exported })}
+          {t('export.successWithPath', { format: exported, path: exportPath })}
         </p>
       )}
     </div>

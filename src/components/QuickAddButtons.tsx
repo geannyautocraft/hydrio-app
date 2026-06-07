@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 import { useHydrationStore } from '../store/useHydrationStore';
 import { trackEvent } from '../services/analyticsService';
 import { BottleIcon } from './BottleIcon';
@@ -20,6 +21,7 @@ export function QuickAddButtons() {
   const addEntry = useHydrationStore((s) => s.addEntry);
   const goalMl = useHydrationStore((s) => s.goalMl);
   const presets = useHydrationStore((s) => s.quickPresets);
+  const [lastAdded, setLastAdded] = useState<number | null>(null);
 
   const handleAdd = (amount: number) => {
     const totalBefore = useHydrationStore.getState().records[new Date().toISOString().slice(0, 10)]?.totalMl ?? 0;
@@ -28,10 +30,17 @@ export function QuickAddButtons() {
     if (totalBefore < goalMl && totalBefore + amount >= goalMl) {
       trackEvent('goal_reached');
     }
+    setLastAdded(amount);
+    window.setTimeout(() => setLastAdded(null), 650);
   };
 
   return (
-    <div className="flex items-end justify-around gap-2 rounded-2xl bg-gradient-to-br from-sky-100/60 to-blue-100/60 p-4 backdrop-blur-sm dark:from-sky-900/30 dark:to-blue-900/30">
+    <div className="relative flex items-end justify-around gap-2 rounded-2xl bg-gradient-to-br from-sky-100/60 to-blue-100/60 p-4 backdrop-blur-sm dark:from-sky-900/30 dark:to-blue-900/30">
+      {lastAdded !== null && (
+        <div className="pointer-events-none absolute left-1/2 top-2 -translate-x-1/2 animate-[ping_0.65s_ease-out_1] rounded-full bg-sky-400/20 px-3 py-1 text-xs font-bold text-sky-700 dark:text-sky-200">
+          +{lastAdded} ml
+        </div>
+      )}
       {presets.map((amount) => (
         <button
           key={amount}

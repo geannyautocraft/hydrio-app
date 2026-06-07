@@ -1,7 +1,16 @@
-import { Capacitor } from '@capacitor/core';
-import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
-import { Share } from '@capacitor/share';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import type { DayRecord } from '../types';
+
+interface HydrioExportPlugin {
+  saveFile(options: { filename: string; content: string; mimeType: string }): Promise<{ uri: string; path: string }>;
+}
+
+export interface ExportResult {
+  filename: string;
+  path: string;
+}
+
+const HydrioExport = registerPlugin<HydrioExportPlugin>('HydrioExport');
 
 interface ExportData {
   exportDate: string;
@@ -42,16 +51,16 @@ function buildExportData(
 export async function exportAsJSON(
   records: Record<string, DayRecord>,
   goalMl: number
-): Promise<void> {
+): Promise<ExportResult> {
   const data = buildExportData(records, goalMl);
   const json = JSON.stringify(data, null, 2);
-  await shareOrDownload(json, 'hydrio-data.json', 'application/json');
+  return saveOrDownload(json, exportFilename('json'), 'application/json');
 }
 
 export async function exportAsCSV(
   records: Record<string, DayRecord>,
   goalMl: number
-): Promise<void> {
+): Promise<ExportResult> {
   const data = buildExportData(records, goalMl);
   const lines: string[] = [
     'Date,Total (ml),Goal (ml),Goal Reached,Entries',
@@ -66,23 +75,22 @@ export async function exportAsCSV(
     );
   }
 
-  await shareOrDownload(lines.join('\n'), 'hydrio-data.csv', 'text/csv');
+  return saveOrDownload(lines.join('\n'), exportFilename('csv'), 'text/csv');
 }
 
-async function shareOrDownload(content: string, filename: string, type: string): Promise<void> {
-  if (Capacitor.isNativePlatform()) {
-    // Native: save to cache dir and share via Android share sheet
-    const result = await Filesystem.writeFile({
-      path: filename,
-      data: content,
-      directory: Directory.Cache,
-      encoding: Encoding.UTF8,
-    });
+function exportFilename(extension: 'json' | 'csv'): string {
+  const date = new Date().toISOString().slice(0, 10);
+  return `hydrio-data-${date}.${extension}`;
+}
 
-    await Share.share({
-      title: filename,
-      url: result.uri,
+async function saveOrDownload(content: string, filename: string, type: string): Promise<ExportResult> {
+  if (Capacitor.isNativePlatform()) {
+    const result = await HydrioExport.saveFile({
+      filename,
+      content,
+      mimeType: type,
     });
+    return { filename, path: result.path };
   } else {
     // Browser: standard download
     const blob = new Blob([content], { type });
@@ -94,5 +102,6 @@ async function shareOrDownload(content: string, filename: string, type: string):
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+    return { filename, path: filename };
   }
 }

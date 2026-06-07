@@ -23,6 +23,8 @@ function getDefaultSyncedState(): SyncedHydrationState {
     notifications: {
       enabled: false,
       intervalMinutes: DEFAULT_REMINDER_INTERVAL,
+      wakeTime: '07:00',
+      sleepTime: '23:00',
     },
   };
 }

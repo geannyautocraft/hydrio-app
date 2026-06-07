@@ -23,6 +23,8 @@ export interface UserProfile {
 export interface NotificationSettings {
   enabled: boolean;
   intervalMinutes: number;
+  wakeTime: string;
+  sleepTime: string;
 }
 
 export interface Achievement {

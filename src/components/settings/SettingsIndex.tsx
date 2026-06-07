@@ -61,7 +61,11 @@ export function SettingsIndex({ onNavigate }: SettingsIndexProps) {
   const goalSubtitle = `${goalMl.toLocaleString()} ml/${t('settings.indexDayShort')}`;
 
   const remindersSubtitle = notifications.enabled
-    ? t('settings.indexRemindersOn', { minutes: notifications.intervalMinutes })
+    ? t('settings.indexRemindersOnWithWindow', {
+        minutes: notifications.intervalMinutes,
+        wake: notifications.wakeTime,
+        sleep: notifications.sleepTime,
+      })
     : t('settings.indexRemindersOff');
 
   const appearanceSubtitle = `${dark ? t('settings.indexAppearanceDark') : t('settings.indexAppearanceLight')}`;
@@ -101,6 +105,13 @@ export function SettingsIndex({ onNavigate }: SettingsIndexProps) {
         onClick={() => onNavigate('reminders')}
       />
       <Row
+        iconBg="bg-lime-500/15 text-lime-700 dark:text-lime-300"
+        icon={<svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a4 4 0 0 0 0 8h4m4-8h4a4 4 0 0 1 0 8h-4M8 10h8" /></svg>}
+        title={t('settings.indexConnections')}
+        subtitle={t('settings.indexConnectionsHint')}
+        onClick={() => onNavigate('connections')}
+      />
+      <Row
         iconBg="bg-purple-500/15 text-purple-600 dark:text-purple-400"
         icon={<svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z" /></svg>}
         title={t('settings.indexAppearance')}
@@ -120,6 +131,13 @@ export function SettingsIndex({ onNavigate }: SettingsIndexProps) {
         title={t('settings.indexPremium')}
         subtitle={premiumSubtitle}
         onClick={() => onNavigate('premium')}
+      />
+      <Row
+        iconBg="bg-teal-500/15 text-teal-600 dark:text-teal-400"
+        icon={<svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M9 18h6M10 22h4M7 14a5 5 0 1 1 10 0c0 1.7-.9 2.7-1.8 3.6-.6.6-1.2 1.2-1.2 2.4h-4c0-1.2-.6-1.8-1.2-2.4C7.9 16.7 7 15.7 7 14z" /></svg>}
+        title={t('settings.indexRoadmap')}
+        subtitle={t('settings.indexRoadmapHint')}
+        onClick={() => onNavigate('roadmap')}
       />
       <Row
         iconBg="bg-rose-500/15 text-rose-600 dark:text-rose-400"
