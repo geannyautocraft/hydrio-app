@@ -1,5 +1,11 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
-import { initializeAuth, indexedDBLocalPersistence, browserLocalPersistence, type Auth } from 'firebase/auth';
+import {
+  browserLocalPersistence,
+  browserPopupRedirectResolver,
+  indexedDBLocalPersistence,
+  initializeAuth,
+  type Auth,
+} from 'firebase/auth';
 import {
   initializeFirestore,
   persistentLocalCache,
@@ -21,6 +27,7 @@ export const firebaseApp: FirebaseApp = initializeApp(firebaseConfig);
 
 export const firebaseAuth: Auth = initializeAuth(firebaseApp, {
   persistence: [indexedDBLocalPersistence, browserLocalPersistence],
+  popupRedirectResolver: browserPopupRedirectResolver,
 });
 
 export const firestore: Firestore = initializeFirestore(firebaseApp, {

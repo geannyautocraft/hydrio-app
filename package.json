@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:appweb": "tsc -b && vite build --mode appweb --outDir hosting/appweb",
     "lint": "eslint .",
     "preview": "vite preview"
   },

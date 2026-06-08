@@ -5,6 +5,8 @@ import { BottomTabBar, type TabKey } from './components/BottomTabBar';
 import { TodayScreen } from './components/screens/TodayScreen';
 import { HistoryScreen } from './components/screens/HistoryScreen';
 import { InsightsScreen } from './components/screens/InsightsScreen';
+import { WebTodayScreen } from './components/screens/WebTodayScreen';
+import { WebHistoryScreen } from './components/screens/WebHistoryScreen';
 import { SettingsScreen } from './components/SettingsScreen';
 import { useMidnightReset } from './hooks/useMidnightReset';
 import { useNotifications } from './hooks/useNotifications';
@@ -16,6 +18,8 @@ import { useThemeStore } from './store/useThemeStore';
 import { useTextSizeStore } from './store/useTextSizeStore';
 import { usePremium } from './hooks/usePremium';
 import { useHydrioWidget } from './hooks/useHydrioWidget';
+import { WebAppGate, isAppWebRoute } from './components/WebAppGate';
+import { WebAppShell } from './components/WebAppShell';
 import { setAnalyticsUser, trackScreenView } from './services/analyticsService';
 import { installGlobalErrorHandlers, setCrashUserId } from './services/crashService';
 
@@ -26,6 +30,7 @@ export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(
     () => !localStorage.getItem(ONBOARDING_KEY)
   );
+  const appWeb = isAppWebRoute();
 
   useMidnightReset();
   useNotifications();
@@ -77,7 +82,7 @@ export default function App() {
     );
   }
 
-  if (showOnboarding) {
+  if (showOnboarding && !appWeb) {
     return <Onboarding onComplete={handleOnboardingComplete} />;
   }
 
@@ -90,7 +95,16 @@ export default function App() {
     }
   };
 
-  return (
+  const renderWebTab = () => {
+    switch (tab) {
+      case 'today': return <WebTodayScreen />;
+      case 'history': return <WebHistoryScreen />;
+      case 'insights': return <InsightsScreen />;
+      case 'settings': return <SettingsScreen />;
+    }
+  };
+
+  const appShell = (
     <>
       <div className="mx-auto max-w-md px-4 pb-24">
         <Header />
@@ -99,4 +113,16 @@ export default function App() {
       <BottomTabBar active={tab} onChange={setTab} />
     </>
   );
+
+  if (appWeb) {
+    return (
+      <WebAppGate user={user} isPremium={isPremium}>
+        <WebAppShell active={tab} onChange={setTab}>
+          {renderWebTab()}
+        </WebAppShell>
+      </WebAppGate>
+    );
+  }
+
+  return appShell;
 }

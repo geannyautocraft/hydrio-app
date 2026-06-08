@@ -6,11 +6,13 @@ import {
   linkWithCredential,
   EmailAuthProvider,
   GoogleAuthProvider,
+  signInWithPopup,
   sendPasswordResetEmail as fbSendPasswordResetEmail,
   signOut as fbSignOut,
   type User,
 } from 'firebase/auth';
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
+import { Capacitor } from '@capacitor/core';
 import { firebaseAuth } from '../lib/firebase';
 
 export type AuthUser = User;
@@ -86,6 +88,12 @@ async function getGoogleCredential(): Promise<ReturnType<typeof GoogleAuthProvid
 
 export async function continueWithGoogle(): Promise<AuthUser> {
   try {
+    if (!Capacitor.isNativePlatform()) {
+      const provider = new GoogleAuthProvider();
+      const { user } = await signInWithPopup(firebaseAuth, provider);
+      return user;
+    }
+
     const credential = await getGoogleCredential();
     const current = firebaseAuth.currentUser;
     if (current?.isAnonymous) {

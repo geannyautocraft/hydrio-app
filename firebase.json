@@ -11,6 +11,12 @@
     ],
     "cleanUrls": true,
     "trailingSlash": false,
+    "rewrites": [
+      {
+        "source": "/appweb/**",
+        "destination": "/appweb/index.html"
+      }
+    ],
     "headers": [
       {
         "source": "**",
